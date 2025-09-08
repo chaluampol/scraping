@@ -1,0 +1,9 @@
+{
+  "name": "scraping",
+  "version": "0.0.1",
+  "scripts": {
+    "merge": "echo 'Enter current branch :' && read currentBranch && echo 'Enter the branch you want to merge :' && read mergeBranch && git checkout $mergeBranch && git pull origin $mergeBranch && git checkout $currentBranch && git merge origin $mergeBranch && git checkout $mergeBranch && git merge origin $currentBranch && git push origin $mergeBranch $currentBranch && git checkout $currentBranch",
+    "merge-cmd": "powershell -File merge-and-push.ps1"
+  },
+  "private": true
+}
