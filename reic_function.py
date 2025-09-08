@@ -2,6 +2,11 @@ import pandas as pd
 import datetime
 import os
 import platform
+import requests
+from dotenv import load_dotenv
+from pathlib import Path
+
+load_dotenv()
 
 
 prv_list = pd.read_csv('Region/TBL_Province.csv')
@@ -200,6 +205,67 @@ def get_floor(name, detail):
     return int(floor)
 
 
+def build_massage(date: str, web: str):
+    project_root = Path(__file__).resolve().parent
+    path_link = str(project_root) + "/links/" + date + "/"  + web + "/"
+    path_data = str(project_root) + "/Files/" + date + "/"  + web + "/"
+
+    files = [f for f in os.listdir(path_link) if os.path.isfile(os.path.join(path_link, f))]
+
+    _noti_massage = ""
+    _noti_massage += "##### " + date + " : "+ web + " #####"
+    property_type = []
+    for file in files:
+        _property_type = str(file).replace("links_", "").replace("link_", "").replace(".txt", "")
+        property_type.append(_property_type)
+
+        _data_msg = ""
+        _data_len = 0
+        try:
+            file_data_path = Path(path_data + '/' + web + "_" + _property_type + ".csv")
+            data_lines = file_data_path.read_text().splitlines()
+            _data_len = len(data_lines)
+            _data_msg = "Data: " + "{:,}".format(_data_len - 1)
+        except:
+            _data_msg = "Data: 0"
+
+        _link_msg = ""
+        try:
+            file_links_path = Path(path_link + '/' + file)
+            link_lines = file_links_path.read_text().splitlines()
+            _link_msg = "Link: " + "{:,}".format(len(link_lines))
+        except:
+            _link_msg = "Link: 0"
+
+        _icon = "✅ " if _data_len > 0 else "❌ "
+        _noti_massage += "\n" + _icon + _property_type
+        _noti_massage += "\n=> " + " " + _link_msg + " " +  _data_msg
+
+    _noti_massage += "\n##### " + web + " #####"
+    return _noti_massage
+
+def send_message(date: str, web: str):
+    line_channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
+    line_user_id = os.getenv("LINE_USER_ID")
+
+    _noti_message = build_massage(date, web)
+
+    url = "https://api.line.me/v2/bot/message/push"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {line_channel_access_token}"
+    }
+    data = {
+        "to": line_user_id,
+        "messages": [{"type": "text", "text": _noti_message}]
+    }
+
+    res_line_msg = requests.post(url, headers=headers, json=data)
+
+    if res_line_msg.status_code == 200:
+        print("Line: Message sent successfully!")
+    else:
+        print(f"Line: Failed to send message: {res_line_msg.status_code}, {res_line_msg.text}")
 
 # print(platform.system())
 # Windows

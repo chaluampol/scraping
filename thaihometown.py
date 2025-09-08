@@ -426,7 +426,7 @@ def get_data(prop_url, type_id, ID):
         date_times.append(date_now)
         room_numbers.append('none')
 
-        print('Get Data OK')
+        # print('Get Data OK')
     except Exception as err:
         print('\n', prop_url)
         print('ERROR!!! =>', err)

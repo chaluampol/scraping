@@ -411,7 +411,7 @@ def get_data(prop_url, type_id, ID ):
         type_ids.append(type_id)
         date_times.append(date_now)
 
-        print('Get Data OK')
+        # print('Get Data OK')
     except Exception as err:
         print('\n', prop_url)
         print('ERROR!!! =>', err)

@@ -23,11 +23,11 @@ ssl._create_default_https_context = ssl._create_unverified_context
 ua = UserAgent()
 
 web = "livinginsider"
-
-
 base_url = "https://www.livinginsider.com/searchword/placeholder_type/placeholder_sale_type/placeholder_page/placeholder_full_type"
 # ****** วันที่เก็บข้อมูล ****** #
-date = datetime(2025, 8, 29).strftime('%Y-%m-%d')
+get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
+# date = datetime(2025, 6, 20).strftime('%Y-%m-%d') # manual
+date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
 _day = date_now.split("-")[2]
 _month = date_now.split("-")[1]
@@ -72,16 +72,13 @@ thai_abbr_months = [
         "ธ.ค.",
 ]
 
-if not os.path.isdir("links/" + date):
-    os.mkdir("links/" + date)
-path_links = "links/" + date + "/" + web
-if not os.path.isdir(path_links):
-    os.mkdir(path_links)
-if not os.path.isdir('Files/' + date):
-    os.mkdir('Files/' + date)
-path_Files = 'Files/' + date + '/' + web
-if not os.path.isdir(path_Files):
-    os.mkdir(path_Files)
+# ---- Path ----
+path_links = os.path.join("links", date, web)
+path_files = os.path.join("Files", date, web)
+
+# ---- Create directories if they don't exist ----
+os.makedirs(path_links, exist_ok=True)
+os.makedirs(path_files, exist_ok=True)
 
 
 
@@ -126,6 +123,90 @@ house_links = []
 type_ids = []
 date_times = []
 
+def reset_list():
+    # เพิ่ม global สำหรับตัวแปรลิสต์ทั้งหมด
+    global ids
+    global webs
+    global names
+    global house_pictures
+    global project_names
+    global addresss
+    global province_codes
+    global district_codes
+    global sub_district_codes
+    global prices
+    global range_of_house_prices
+    global area_SQMs
+    global area_SQWs
+    global floor_numbers
+    global floors
+    global sell_type_ids
+    global source_ids
+    global bedrooms
+    global bathrooms
+    global garages
+    global details
+    global latitudes
+    global longtitudes
+    global duplicates
+    global news
+    global cross_webs
+    global cross_refs
+    global days
+    global months
+    global years
+    global post_dates
+    global seller_names
+    global seller_tels
+    global seller_emails
+    global seller_ids
+    global room_numbers
+    global house_links
+    global type_ids
+    global completion_years
+    global date_times
+
+    ids = []
+    webs = []
+    names = []
+    house_pictures = []
+    project_names = []
+    addresss = []
+    province_codes = []
+    district_codes = []
+    sub_district_codes = []
+    prices = []
+    range_of_house_prices = []
+    area_SQMs = []
+    area_SQWs = []
+    floor_numbers = []
+    floors = []
+    sell_type_ids = []
+    source_ids = []
+    bedrooms = []
+    bathrooms = []
+    garages = []
+    details = []
+    latitudes = []
+    longtitudes = []
+    duplicates = []
+    news = []
+    cross_webs = []
+    cross_refs = []
+    days = []
+    months = []
+    years = []
+    post_dates = []
+    seller_names = []
+    seller_tels = []
+    seller_emails = []
+    seller_ids = []
+    room_numbers = []
+    house_links = []
+    type_ids = []
+    completion_years = []
+    date_times = []
+
 
 def save_list_links(prop_type):
     print("---------------------::  " + prop_type + "  ::---------------------")
@@ -141,7 +222,7 @@ def save_list_links(prop_type):
         Headers = {'User-Agent': ua.random}
         wait_time = 0.25
         url = req_url.replace("placeholder_page", str(i))
-        print(url)
+        # print(url)
         req = requests.get(url, headers=Headers)
         while req.status_code != 200:
             req = requests.get(url, headers=Headers)
@@ -156,7 +237,7 @@ def save_list_links(prop_type):
 
 def extract_links(content):
     soup = BeautifulSoup(content, "html.parser")
-    print(soup)
+    # print(soup)
     datas = soup.find("div", class_="panel-body").find_all("div", class_='istock-list')
     # print(datas)
     links = []
@@ -222,7 +303,7 @@ def get_data(prop_url, type_id, ID):
             district_codes.append(int(_dis))
             sub_district_codes.append(int(_subdis))
             addresss.append(_province_codes + ' ' + _district_codes + ' ' + _sub_district_codes)
-            print(addresss)
+            # print(addresss)
         except Exception as err:
             addresss.append('none')
             province_codes.append('none')
@@ -380,7 +461,7 @@ def get_data(prop_url, type_id, ID):
         date_times.append(date_now)
         room_numbers.append('none')
 
-        print('Get Data OK')
+        # print('Get Data OK')
     except Exception as err:
         print('\n', prop_url)
         print('ERROR!!! =>', err)
@@ -388,99 +469,116 @@ def get_data(prop_url, type_id, ID):
 
 
 if __name__ == "__main__":
-    # GET LINK
-    # for prop_type in property_type:
-    #     save_list_links(prop_type)
+    for get_type in get_types:
+        # GET LINK
+        if get_type == 'LINK':
+            for prop_type in property_type:
+                save_list_links(prop_type)
+                # break
+                
+        # GET DATA
+        if get_type == "DATA":
+            _start_date = datetime.now()
+            for prop_type in property_type:
+                print("---------------------::  GET DATA " + prop_type + "  ::---------------------")
+                # เรียกใช้ฟังก์ชัน reset_list() ที่แก้ไขแล้ว
+                reset_list()
+                loop_links(prop_type)
 
-    # GET DATA
-    for prop_type in property_type:
-        print("---------------------::  GET DATA " + prop_type + "  ::---------------------")
-        loop_links(prop_type)
+                print('ids', len(ids))
+                print('webs', len(webs))
+                print('names', len(names))
+                print('house_pictures', len(house_pictures))
+                print('project_names', len(project_names))
+                print('addresss', len(addresss))
+                print('province_codes', len(province_codes))
+                print('district_codes', len(district_codes))
+                print('sub_district_codes', len(sub_district_codes))
+                print('prices', len(prices))
+                print('range_of_house_prices', len(range_of_house_prices))
+                print('area_SQMs', len(area_SQMs))
+                print('area_SQWs', len(area_SQWs))
+                print('floor_numbers', len(floor_numbers))
+                print('floors', len(floors))
+                print('sell_type_ids', len(sell_type_ids))
+                print('source_ids', len(source_ids))
+                print('bedrooms', len(bedrooms))
+                print('bathrooms', len(bathrooms))
+                print('garages', len(garages))
+                print('details', len(details))
+                print('latitudes', len(latitudes))
+                print('longtitudes', len(longtitudes))
+                print('duplicates', len(duplicates))
+                print('news', len(news))
+                print('cross_webs', len(cross_webs))
+                print('cross_refs', len(cross_refs))
+                print('days', len(days))
+                print('months', len(months))
+                print('years', len(years))
+                print('post_dates', len(post_dates))
+                print('seller_names', len(seller_names))
+                print('seller_tels', len(seller_tels))
+                print('seller_emails', len(seller_emails))
+                print('seller_ids', len(seller_ids))
+                print('room_numbers', len(room_numbers))
+                print('house_links', len(house_links))
+                print('type_ids', len(type_ids))
+                print('completion_years', len(completion_years))
+                print('date_times', len(date_times))
 
-        print('ids', len(ids))
-        print('webs', len(webs))
-        print('names', len(names))
-        print('house_pictures', len(house_pictures))
-        print('project_names', len(project_names))
-        print('addresss', len(addresss))
-        print('province_codes', len(province_codes))
-        print('district_codes', len(district_codes))
-        print('sub_district_codes', len(sub_district_codes))
-        print('prices', len(prices))
-        print('range_of_house_prices', len(range_of_house_prices))
-        print('area_SQMs', len(area_SQMs))
-        print('area_SQWs', len(area_SQWs))
-        print('floor_numbers', len(floor_numbers))
-        print('floors', len(floors))
-        print('sell_type_ids', len(sell_type_ids))
-        print('source_ids', len(source_ids))
-        print('bedrooms', len(bedrooms))
-        print('bathrooms', len(bathrooms))
-        print('garages', len(garages))
-        print('details', len(details))
-        print('latitudes', len(latitudes))
-        print('longtitudes', len(longtitudes))
-        print('duplicates', len(duplicates))
-        print('news', len(news))
-        print('cross_webs', len(cross_webs))
-        print('cross_refs', len(cross_refs))
-        print('days', len(days))
-        print('months', len(months))
-        print('years', len(years))
-        print('post_dates', len(post_dates))
-        print('seller_names', len(seller_names))
-        print('seller_tels', len(seller_tels))
-        print('seller_emails', len(seller_emails))
-        print('seller_ids', len(seller_ids))
-        print('room_numbers', len(room_numbers))
-        print('house_links', len(house_links))
-        print('type_ids', len(type_ids))
-        print('completion_years', len(completion_years))
-        print('date_times', len(date_times))
+                property_list = pd.DataFrame({
+                    'ID': ids,
+                    'web': webs,
+                    'name': names,
+                    'project_name': project_names,
+                    'address': addresss,
+                    'subdistrict_code': sub_district_codes,
+                    'district_code': district_codes,
+                    'province_code': province_codes,
+                    'price': prices,
+                    'range_of_house_price': range_of_house_prices,
+                    'area_SQM': area_SQMs,
+                    'area_SQW': area_SQWs,
+                    'floor_number': floor_numbers,
+                    'floor': floors,
+                    'room_number': room_numbers,
+                    'bedroom': bedrooms,
+                    'bathroom': bathrooms,
+                    'garage': garages,
+                    'latitude': latitudes,
+                    'longtitude': longtitudes,
+                    'detail': details,
+                    'seller_name': seller_names,
+                    'seller_tel': seller_tels,
+                    'seller_email': seller_emails,
+                    'seller_id': seller_ids,
+                    'picture': house_pictures,
+                    'house_link': house_links,
+                    'type_id': type_ids,
+                    'sell_type_id': sell_type_ids,
+                    'source_id': source_ids,
+                    'duplicate': duplicates,  # 0
+                    'new': news,  # 1
+                    'cross_web': cross_webs,  # -1
+                    'cross_ref': cross_refs,  # str("None")
+                    'completion_year': completion_years,  # str("None")
+                    'year': years,
+                    'month': months,
+                    'day': days,
+                    'post_date': post_dates,
+                    'date_time': date_times,  # date
+                    'update_date': post_dates,
+                })
 
-        property_list = pd.DataFrame({
-            'ID': ids,
-            'web': webs,
-            'name': names,
-            'project_name': project_names,
-            'address': addresss,
-            'subdistrict_code': sub_district_codes,
-            'district_code': district_codes,
-            'province_code': province_codes,
-            'price': prices,
-            'range_of_house_price': range_of_house_prices,
-            'area_SQM': area_SQMs,
-            'area_SQW': area_SQWs,
-            'floor_number': floor_numbers,
-            'floor': floors,
-            'room_number': room_numbers,
-            'bedroom': bedrooms,
-            'bathroom': bathrooms,
-            'garage': garages,
-            'latitude': latitudes,
-            'longtitude': longtitudes,
-            'detail': details,
-            'seller_name': seller_names,
-            'seller_tel': seller_tels,
-            'seller_email': seller_emails,
-            'seller_id': seller_ids,
-            'picture': house_pictures,
-            'house_link': house_links,
-            'type_id': type_ids,
-            'sell_type_id': sell_type_ids,
-            'source_id': source_ids,
-            'duplicate': duplicates, # 0
-            'new': news, # 1
-            'cross_web': cross_webs , # -1
-            'cross_ref': cross_refs , # str("None")
-            'completion_year': completion_years , # str("None")
-            'year': years,
-            'month': months,
-            'day': days ,
-            'post_date': post_dates,
-            'date_time': date_times, # date
-            'update_date': post_dates,
-        })
+                property_list.to_csv(path_files + '/' + web + "_" + prop_type + '.csv')
+                print('Export', len(ids), 'Rows To CSV File Completed!!!! ')
+                print('Start At ', _start_date)
+                print('Success At ', datetime.now())
 
-        property_list.to_csv(path_Files + '/' + web + '_' + prop_type + '.csv')
-        print('Export', len(ids), 'Rows To CSV File Completed!!!! ')
+                # ไม่ต้องเรียก reset_list() ซ้ำตรงนี้แล้ว
+                property_list = None
+
+                # break
+
+            # send line message on success.
+            fn.send_message(date, web)

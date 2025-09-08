@@ -1,0 +1,13 @@
+pandas
+beautifulsoup4
+fake-useragent
+requests
+playwright
+pytest-playwright
+dotenv
+tqdm
+selenium
+pyautogui
+pyperclip
+cloudscraper
+geckodriver-autoinstaller

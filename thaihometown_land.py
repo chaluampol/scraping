@@ -501,7 +501,7 @@ def get_data(prop_url, type_id, ID):
             print('\n', prop_url)
             print('ERROR!!! =>', err)
 
-        print('Get Data OK')
+        # print('Get Data OK')
     except Exception as err:
         print('\n', prop_url)
         print('ERROR!!! =>', err)
