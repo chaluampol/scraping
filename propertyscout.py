@@ -22,7 +22,7 @@ from fake_useragent import UserAgent
 import  json
 
 ssl._create_default_https_context = ssl._create_unverified_context
-date = datetime(2025, 4, 30).strftime('%Y-%m-%d')
+date = datetime(2024, 12, 16).strftime('%Y-%m-%d')
 date_now = fn.get_date_now()
 ua = UserAgent()
 web ="propertyscout"
@@ -30,23 +30,13 @@ base_url = 'https://propertyscout.co.th/r_type/placeholder_type/ล่าสุ�
 
 
 property_type = {
-   "home"      : { "type_id": 1, "route": "บ้านเดี่ยว", "r_type": "ขาย", "start": 1, "end": 60},
-   "condo"     : { "type_id": 2, "route": "คอนโด", "r_type": "ขาย", "start": 1, "end": 60},
-   "townhouse" : { "type_id": 3, "route": "ทาวน์เฮ้าส์", "r_type": "ขาย", "start": 1, "end": 25},
-   "home_rent"      : { "type_id": 1, "route": "บ้านเดี่ยว", "r_type": "ให้เช่า", "start": 1, "end": 25},
-   "condo_rent"     : { "type_id": 2, "route": "คอนโด", "r_type": "ให้เช่า", "start": 1, "end": 60},
-   "townhouse_rent" : { "type_id": 3, "route": "ทาวน์เฮ้าส์", "r_type": "ให้เช่า", "start": 1, "end": 25}
+   "home"      : { "type_id": 1, "route": "บ้านเดี่ยว", "r_type": "ขาย", "start": 49, "end": 60},
+   "condo"     : { "type_id": 2, "route": "คอนโด", "r_type": "ขาย", "start": 2, "end": 60},
+   "townhouse" : { "type_id": 3, "route": "ทาวน์เฮ้าส์", "r_type": "ขาย", "start": 2, "end": 25},
+   "home_rent"      : { "type_id": 1, "route": "บ้านเดี่ยว", "r_type": "ให้เช่า", "start": 2, "end": 25},
+   "condo_rent"     : { "type_id": 2, "route": "คอนโด", "r_type": "ให้เช่า", "start": 54, "end": 60},
+   "townhouse_rent" : { "type_id": 3, "route": "ทาวน์เฮ้าส์", "r_type": "ให้เช่า", "start": 17, "end": 25}
 }
-
-
-# property_type = {
-#    "home"      : { "type_id": 1, "route": "บ้านเดี่ยว", "r_type": "ขาย", "start": 1, "end": 60},
-#    "condo"     : { "type_id": 2, "route": "คอนโด", "r_type": "ขาย", "start": 1, "end": 60},
-#    "townhouse" : { "type_id": 3, "route": "ทาวน์เฮ้าส์", "r_type": "ขาย", "start": 1, "end": 25},
-#    "home_rent"      : { "type_id": 1, "route": "บ้านเดี่ยว", "r_type": "ให้เช่า", "start": 1, "end": 25},
-#    "condo_rent"     : { "type_id": 2, "route": "คอนโด", "r_type": "ให้เช่า", "start": 1, "end": 60},
-#    "townhouse_rent" : { "type_id": 3, "route": "ทาวน์เฮ้าส์", "r_type": "ให้เช่า", "start": 1, "end": 25}
-# }
 
 
 if not os.path.isdir("links/" + date):
@@ -209,19 +199,14 @@ def get_data(prop_url, type_id, ID ):
 
         try:
             _addresss =soup.find('section', class_='mb-8 max-md:mb-8').find('p', class_='text-lg flex items-center').get_text().strip().replace(',','')
-            # print(_addresss)
 
-            _addresssp2 = re.sub(r'\d+', '', _addresss).strip().replace(',','')
-            # print(_addresssp2)
-            # print(_addresssp2)
-            _locationss = _addresssp2.split()
-            print(_locationss)
-            _province_codes = _locationss[-1]
-            _district_codes = _locationss[-2]
-            _sub_district_codes = _locationss[-3]
+            _locationss = _addresss.split()
+            _province_codes = _locationss[3]
+            _district_codes = _locationss[2]
+            _sub_district_codes = _locationss[1]
             _prv, _dis, _subdis = fn.prov_dis_subdis(_province_codes,_district_codes,_sub_district_codes)
-            print(_province_codes,_district_codes,_sub_district_codes)
-            print(_prv, _dis, _subdis)
+            # print(int(_subdis))
+            # print(_district_codes)
             addresss.append(_addresss)
             province_codes.append(int(_prv))
             district_codes.append(int(_dis))
@@ -378,8 +363,8 @@ def get_data(prop_url, type_id, ID ):
 
 if __name__ == '__main__':
    # GET LINK
-   for prop_type in property_type:
-       save_link(prop_type)
+   # for prop_type in property_type:
+   #     save_link(prop_type)
 
    for prop_type in property_type:
        print("---------------------::  GET DATA " + prop_type + "  ::---------------------")
