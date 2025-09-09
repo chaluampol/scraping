@@ -18,7 +18,7 @@ pip install -r requirements.txt
 0 14 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/baania.sh
 
 # every saturday at 15:00
-# 0 15 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/dotproprety.sh
+0 15 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/dotproprety.sh
 
 # every saturday at 18:00
 0 18 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/interhome.sh
@@ -30,7 +30,7 @@ pip install -r requirements.txt
 0 14 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/klungbaan.sh
 
 # every sunday at 16:00
-# 0 16 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/terrabkk.sh
+0 16 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/terrabkk.sh
 
 # every sunday at 17:00
 0 17 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown.sh
