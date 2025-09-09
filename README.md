@@ -12,29 +12,29 @@ pip install -r requirements.txt
 Pi Crontab
 ``` shell
 # everyday at 06:00
-0 6 * * * /home/dev-team/Desktop/scraping/baanfinder.sh
+0 6 * * * /home/dev-team/Desktop/scraping/crontab/pi/baanfinder.sh
 
 # everyday saturday at 14:00
-0 14 * * 6 /home/dev-team/Desktop/scraping/baania.sh
+0 14 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/baania.sh
 
 # everyday saturday at 15:00
-# 0 15 * * 6 /home/dev-team/Desktop/scraping/dotproprety.sh
+# 0 15 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/dotproprety.sh
 
 # everyday saturday at 18:00
-0 18 * * 6 /home/dev-team/Desktop/scraping/interhome.sh
+0 18 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/interhome.sh
 
 # everyday saturday at 19:00
-0 19 * * 6 /home/dev-team/Desktop/scraping/kaidee.sh
+0 19 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/kaidee.sh
 
 # everyday sunday at 14:00
-0 14 * * 7 /home/dev-team/Desktop/scraping/klungbaan.sh
+0 14 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/klungbaan.sh
 
 # everyday sunday at 16:00
-# 0 16 * * 7 /home/dev-team/Desktop/scraping/terrabkk.sh
+# 0 16 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/terrabkk.sh
 
 # everyday sunday at 17:00
-0 17 * * 7 /home/dev-team/Desktop/scraping/thaihometown.sh
+0 17 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown.sh
 
 # everyday sunday at 19:00
-0 19 * * 7 /home/dev-team/Desktop/scraping/thaihometown_land.sh
+0 19 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown_land.sh
 ```
