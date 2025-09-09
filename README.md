@@ -1,6 +1,6 @@
 # scraping
 
-Create a virtual environment
+## Create a virtual environment
 ``` shell
 python3 -m venv .venv
 source .venv/bin/activate
@@ -9,7 +9,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Pi Crontab
+## Pi Crontab
 ``` shell
 # everyday at 06:00
 0 6 * * * /home/dev-team/Desktop/scraping/crontab/pi/baanfinder.sh
