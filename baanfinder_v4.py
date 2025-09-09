@@ -453,7 +453,7 @@ def get_data(prop_url, type_id, ID):
 
                 try:
                     _detail = soup.find("div", class_='detailedInfo').find('div', class_='detailedInfo').text\
-                                .replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ')
+                                .replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
                     details.append(_detail)
                 except Exception as err:
                     details.append('none')

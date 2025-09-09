@@ -24,36 +24,22 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 ua = UserAgent()
 
-web = "thaihometownlind"
 # base_url = "https://www.thaihometown.com/search/?page=placeholder_page&FormType=Sale&Type=placeholder_type&Submit=Search"
 base_url ="https://www.thaihometown.com/search/?page=placeholder_page&FormType=Sale&Type=placeholder_type&Submit=Search"
 
 
-# ****** วันที่เก็บข้อมูล ****** #
-date = datetime(2025, 1, 31).strftime('%Y-%m-%d')
+# +++++++++++++ แก้ข้อมูลเพื่อเก็บข้อมูล +++++++++++++ #
+web = 'thaihometownland'
+get_types = ['DATA'] #'LINK', 'DATA'
+# date = datetime(2025, 6, 20).strftime('%Y-%m-%d') # manual
+date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
+
 property_type = {
-    "Land": {"type_id": 1, "route": "Land", "r_type": "land", "start": 368 ,"end": 490}
- # 355-366 #ผ่าน  45
-# ไม่ผ่าน
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    # "Land": {"type_id": 1, "route": "Land", "r_type": "land", "start": 368 ,"end": 490} 
+    "Land": {"type_id": 1, "route": "Land", "r_type": "land", "start": 1 ,"end": 1} 
+    # 355-366 #ผ่าน  45
+    # ไม่ผ่าน
 }
 
 thai_full_months = [
@@ -85,18 +71,13 @@ thai_abbr_months = [
         "ธ.ค.",
 ]
 
-if not os.path.isdir("links/" + date):
-    os.mkdir("links/" + date)
-path_links = "links/" + date + "/" + web
-if not os.path.isdir(path_links):
-    os.mkdir(path_links)
-if not os.path.isdir('Files/' + date):
-    os.mkdir('Files/' + date)
-path_Files = 'Files/' + date + '/' + web
-if not os.path.isdir(path_Files):
-    os.mkdir(path_Files)
+# ---- Path ----
+path_links = os.path.join("links", date, web)
+path_files = os.path.join("Files", date, web)
 
-
+# ---- Create directories if they don't exist ----
+os.makedirs(path_links, exist_ok=True)
+os.makedirs(path_files, exist_ok=True)
 
 ids = []
 ref_code = []
@@ -144,6 +125,92 @@ room_numbers = []
 house_links = []
 type_ids = []
 date_times = []
+
+def reset_list():
+    # เพิ่ม global สำหรับตัวแปรลิสต์ทั้งหมด
+    global ids
+    global ref_code
+    global webs
+    global names
+    global house_pictures
+    global project_names
+    global addresss
+    global province_codes
+    global district_codes
+    global sub_district_codes
+    global prices
+    global range_of_house_prices
+    global area_SQWs
+    global floor_numbers
+    global floors
+    global sell_type_ids
+    global source_ids
+    global bedrooms
+    global bathrooms
+    global garages
+    global details
+    global latitudes
+    global longtitudes
+    global duplicates
+    global news
+    global cross_webs
+    global cross_refs
+    global days
+    global months
+    global years
+    global post_dates
+    global seller_names
+    global seller_tels
+    global seller_emails
+    global seller_ids
+    global room_numbers
+    global house_links
+    global type_ids
+    global completion_years
+    global date_times
+
+    ids = []
+    ref_code = []
+    webs = []
+    names = []
+    house_pictures = []
+    project_names = []
+    addresss = []
+    province_codes = []
+    district_codes = []
+    sub_district_codes = []
+    prices = []
+    range_of_house_prices = []
+    area_SQWs = []
+    floor_numbers = []
+    floors = []
+    sell_type_ids = []
+    source_ids = []
+    bedrooms = []
+    bathrooms = []
+    garages = []
+    details = []
+    latitudes = []
+    longtitudes = []
+    duplicates = []
+    news = []
+    cross_webs = []
+    cross_refs = []
+    days = []
+    months = []
+    years = []
+    post_dates = []
+    seller_names = []
+    seller_tels = []
+    seller_emails = []
+    seller_ids = []
+    room_numbers = []
+    house_links = []
+    type_ids = []
+    completion_years = []
+    date_times = []
+
+
 
 
 def save_list_links(prop_type):
@@ -255,21 +322,21 @@ def get_data(prop_url, type_id, ID):
         room_numbers.append('none')
 
         try:
-            _ref_code = soup.find('div', class_ ='NoID').get_text().strip().replace("\n","").replace("No.","")
+            _ref_code = soup.find('div', class_ ='NoID').get_text().strip().replace("\n","").replace("No.","").replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             print(_ref_code)
             ref_code.append(_ref_code)
         except Exception as err:
             ref_code.append('none')
 
         try:
-            name = soup.find('title').get_text().split('|')[0].strip().replace(',', '')
+            name = soup.find('title').get_text().split('|')[0].strip().replace(',', '').replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             # print(name)
             names.append(name)
         except Exception as err:
             names.append('none')
 
         try:
-            _latitude = soup.find('div', class_='maps_google2').parent.iframe['src'].split('!3d')[1].split('!')[0]
+            _latitude = soup.find('div', class_='maps_google2').parent.iframe['src'].split('!3d')[1].split('!')[0].replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             latitudes.append(_latitude)
             print(_latitude)
         except Exception as err:
@@ -277,7 +344,7 @@ def get_data(prop_url, type_id, ID):
 
 
         try:
-            _longtitudes = soup.find('div', class_='maps_google2').parent.iframe['src'].split('!2d')[1].split('!')[0]
+            _longtitudes = soup.find('div', class_='maps_google2').parent.iframe['src'].split('!2d')[1].split('!')[0].replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             longtitudes.append(_longtitudes)
             print(_longtitudes)
         except Exception as err:
@@ -285,7 +352,7 @@ def get_data(prop_url, type_id, ID):
 
         try:
             # _province = soup.find(text="จังหวัดที่ตั้ง : ").parent.parent.get_text().strip().split("\n")[2]
-            _provinces = soup.find_all('a', class_='linkcity')[1].get_text().strip().replace('ตารางวา', '').replace('ตารางเมตร', '').replace('  ', '').replace(',', '')
+            _provinces = soup.find_all('a', class_='linkcity')[1].get_text().strip().replace('ตารางวา', '').replace('ตารางเมตร', '').replace('  ', '').replace(',', '').replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             _provinces = re.sub(r'\d+', ' ', _provinces)
             province.append(_provinces)
 
@@ -294,14 +361,14 @@ def get_data(prop_url, type_id, ID):
             province.append('none')
 
         try:
-            _district = soup.find_all('a', class_='linkcity')[2].get_text().strip().replace('ตารางวา', '').replace('ตารางเมตร', '').replace('  ', '').replace(',', '')
+            _district = soup.find_all('a', class_='linkcity')[2].get_text().strip().replace('ตารางวา', '').replace('ตารางเมตร', '').replace('  ', '').replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             _district = re.sub(r'\d+', ' ', _district)
             district.append(_district)
         except Exception as err:
             district.append('none')
 
         try:
-            _sub_district = soup.find_all('a', class_='linkcity')[3].get_text().strip().replace('ตารางวา', '').replace('ตารางเมตร', '').replace('  ', '').replace(',', '')
+            _sub_district = soup.find_all('a', class_='linkcity')[3].get_text().strip().replace('ตารางวา', '').replace('ตารางเมตร', '').replace('  ', '').replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             _sub_district = re.sub(r'\d+', ' ', _sub_district)
             sub_district.append(_sub_district)
         except Exception as err:
@@ -326,10 +393,10 @@ def get_data(prop_url, type_id, ID):
         try:
             _price = soup.find('td', class_='table_set3PriceN').get_text().strip().split('\n')
             if _price[2] == '':
-                _prices = int(re.sub('[^0-9]', '', _price[0]))
+                _prices = int(re.sub('[^0-9]', '', _price[0].replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()))
                 prices.append(_prices)
             else:
-                _prices = int(re.sub('[^0-9]', '', _price[2]))
+                _prices = int(re.sub('[^0-9]', '', _price[2].replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()))
                 prices.append(_prices)
 
 
@@ -340,18 +407,18 @@ def get_data(prop_url, type_id, ID):
 
 
         try:
-            _area = soup.find('div', class_='sqm_right').parent.parent.get_text().strip().replace('เนื้อที่รวม : ', '')
+            _area = soup.find('div', class_='sqm_right').parent.parent.get_text().strip().replace('เนื้อที่รวม : ', '').replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             if _area == '':
                 _area = \
                 soup.find('td', class_='table_set3').parent.parent.get_text().strip().split("เนื้อที่รวม :")[1].split(
-                    "ราคา :")[0].split("พื้นที่ใช้สอย :")[0].replace('', '').replace('\n', '').replace('\t', '').replace('ขนาดที่ดิน', '').replace('\r', '').replace(',', '')
+                    "ราคา :")[0].split("พื้นที่ใช้สอย :")[0].replace('', '').replace('\n', '').replace('\t', '').replace('ขนาดที่ดิน', '').replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             # print(_area)
             area.append(_area)
         except AttributeError:
             _area = \
             soup.find('td', class_='table_set3').parent.parent.get_text().strip().split("เนื้อที่รวม :")[1].split(
                 "ราคา :")[0].split("พื้นที่ใช้สอย :")[0].replace('', '').replace('\n', '').replace('\t', '').replace(
-                'ขนาดที่ดิน', '').replace('\r', '').replace(',', '')
+                'ขนาดที่ดิน', '').replace('\r', '').replace(',','').replace('\n', ' ').replace('\t', ' ').strip()
             print(_area)
             area.append(_area)
         except Exception as err:
@@ -359,7 +426,7 @@ def get_data(prop_url, type_id, ID):
 
         try:
             _area = soup.find('td', class_='table_set3').parent.parent.get_text().strip().split("เนื้อที่รวม :")[1].split("ราคา :")[0].split("พื้นที่ใช้สอย :")[0].replace('','') \
-                .replace('\n', '').replace('\t', '').replace('ขนาดที่ดิน', '').replace('\r', '').replace(',', '')
+                .replace('\n', '').replace('\t', '').replace('ขนาดที่ดิน', '').replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             # print(_area)
             pattern = r'(\d+(?:\.\d+)?)\sไร่'  # Regular expression pattern to match the number in front of "ไร่"
             matches = re.findall(pattern, _area)  # Find all matches in the data
@@ -377,7 +444,7 @@ def get_data(prop_url, type_id, ID):
 
         try:
             _area = soup.find('td', class_='table_set3').parent.parent.get_text().strip().split("เนื้อที่รวม :")[1].split("ราคา :")[0].split("พื้นที่ใช้สอย :")[0].replace('','') \
-                .replace('\n', '').replace('\t', '').replace('ขนาดที่ดิน', '').replace('\r', '').replace(',', '')
+                .replace('\n', '').replace('\t', '').replace('ขนาดที่ดิน', '').replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             # _area_Ngan =_area.split('งาน')[0].split('ไร่')[1]
             pattern = r'(\d+(?:\.\d+)?)\sงาน'
             matches = re.findall(pattern, _area)  # Find all matches in the data
@@ -399,7 +466,7 @@ def get_data(prop_url, type_id, ID):
 
         try:
             _area = soup.find('td', class_='table_set3').parent.parent.get_text().strip().split("เนื้อที่รวม :")[1].split("ราคา :")[0].split("พื้นที่ใช้สอย :")[0].replace('', '') \
-                .replace('\n', '').replace('\t', '').replace('ขนาดที่ดิน', '').replace('\r', '').replace(',', '')
+                .replace('\n', '').replace('\t', '').replace('ขนาดที่ดิน', '').replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             # _area_SQWs = _area.split('ไร่')[1].split('งาน')[1].split('ตารางวา')[0]
             pattern = r'(\d+(?:\.\d+)?)\sตารางวา'
             matches = re.findall(pattern, _area)  # Find all matches in the data
@@ -419,7 +486,7 @@ def get_data(prop_url, type_id, ID):
 
 
         try:
-            room = soup.find(text="จำนวนห้อง : ").parent.parent.get_text().strip().split('\n')[0]
+            room = soup.find(text="จำนวนห้อง : ").parent.parent.get_text().strip().split('\n')[0].replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             # print(room)
         except Exception as err:
             room = 'none'
@@ -428,7 +495,7 @@ def get_data(prop_url, type_id, ID):
             _bedrooms = room.split(' ')[0]
             if _bedrooms == 'ห้องสตูดิโอ':
                 _bedrooms = 'none'
-            bedrooms.append(_bedrooms)
+            bedrooms.append(_bedrooms.replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip())
         except Exception as err:
             bedrooms.append('none')
 
@@ -436,7 +503,7 @@ def get_data(prop_url, type_id, ID):
             _bathrooms = room.split(' ')[2]
             if _bathrooms == 'ห้องน้ำ':
                 _bathrooms = room.split(' ')[1]
-            bathrooms.append(_bathrooms)
+            bathrooms.append(_bathrooms.replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip())
         except Exception as err:
             bathrooms.append('none')
 
@@ -444,18 +511,18 @@ def get_data(prop_url, type_id, ID):
             _garages = room.split(' ')[5]
             if _garages == 'คัน':
                 _garages = room.split(' ')[4]
-            garages.append(_garages)
+            garages.append(_garages.replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip())
         except Exception as err:
             garages.append('none')
 
         try:
-            _detail = soup.find('div', class_='headtitle2').get_text().replace('\n', ' ').replace('\r', '').replace(',', '')
+            _detail = soup.find('div', class_='headtitle2').get_text().replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             details.append(_detail)
         except Exception as err:
             details.append('none')
 
         try:
-            _house_pictures = soup.find('div', {'id': 'divImg'}).find('img', {'class': 'images_show'})['src']
+            _house_pictures = soup.find('div', {'id': 'divImg'}).find('img', {'class': 'images_show'})['src'].replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             house_pictures.append("https://www.prakardproperty.com" + _house_pictures)
             # print(house_pictures)
         except Exception as err:
@@ -486,13 +553,13 @@ def get_data(prop_url, type_id, ID):
 
 
         try:
-            _seller_names = soup.find('span', {'id': 'rName'}).get_text().strip().replace(',', '')
+            _seller_names = soup.find('span', {'id': 'rName'}).get_text().strip().replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             seller_names.append(_seller_names)
         except Exception as err:
             seller_names.append('none')
 
         try:
-            _seller_tels = soup.find('div', {'id': 'PhoneMember'}).get_text().strip().replace(',', '')
+            _seller_tels = soup.find('div', {'id': 'PhoneMember'}).get_text().strip().replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
             print(_seller_tels)
             seller_tels.append(_seller_tels)
             print(seller_tels)
@@ -526,183 +593,116 @@ def get_data(prop_url, type_id, ID):
         seller_tels.append('none')
 
 
-if __name__ == "__main__":
-    # GET LINK
-    for prop_type in property_type:
-        save_list_links(prop_type)
+if __name__ == '__main__':
 
+    for get_type in get_types:
+        if get_type == 'LINK':
+            for prop_type in property_type:
+                save_list_links(prop_type)
+                # break
 
-    # GET DATA
-    for prop_type in property_type:
-        print("---------------------::  GET DATA " + prop_type + "  ::---------------------")
-        loop_links(prop_type)
-        sleep(0.5)
-    #
-    print('ids', len(ids))
-    print('ref_code',len(ref_code))
-    print('webs', len(webs))
-    print('names', len(names))
-    print('house_pictures', len(house_pictures))
-    print('project_names', len(project_names))
-    print('addresss', len(addresss))
-    print('province ', len(province))
-    print('district ', len(district))
-    print('sub_district ', len(sub_district))
-    print('province_codes', len(province_codes))
-    print('district_codes', len(district_codes))
-    print('sub_district_codes', len(sub_district_codes))
-    print('prices', len(prices))
-    print('range_of_house_prices', len(range_of_house_prices))
-    print('area', len(area))
-    print('area_rai', len(area_rai))
-    print('area_Ngan', len(area_Ngan))
-    print('area_SQWs', len(area_SQWs))
-    print('floor_numbers', len(floor_numbers))
-    print('floors', len(floors))
-    print('sell_type_ids', len(sell_type_ids))
-    print('source_ids', len(source_ids))
-    print('bedrooms', len(bedrooms))
-    print('bathrooms', len(bathrooms))
-    print('garages', len(garages))
-    print('details', len(details))
-    print('latitudes', len(latitudes))
-    print('longtitudes', len(longtitudes))
-    print('duplicates', len(duplicates))
-    print('news', len(news))
-    print('cross_webs', len(cross_webs))
-    print('cross_refs', len(cross_refs))
-    print('days', len(days))
-    print('months', len(months))
-    print('years', len(years))
-    print('post_dates', len(post_dates))
-    print('seller_names', len(seller_names))
-    print('seller_tels', len(seller_tels))
-    print('seller_emails', len(seller_emails))
-    print('seller_ids', len(seller_ids))
-    print('room_numbers', len(room_numbers))
-    print('house_links', len(house_links))
-    print('type_ids', len(type_ids))
-    print('completion_years', len(completion_years))
-    print('date_times', len(date_times))
+        if get_type == "DATA":
+            _start_date = datetime.now()
+            for prop_type in property_type:
+                print("---------------------::  GET DATA " + prop_type + "  ::---------------------")
+                # เรียกใช้ฟังก์ชัน reset_list() ที่แก้ไขแล้ว
+                reset_list()
+                loop_links(prop_type)
 
+                print('ids', len(ids))
+                print('ref_code', len(ref_code))
+                print('webs', len(webs))
+                print('names', len(names))
+                print('house_pictures', len(house_pictures))
+                print('project_names', len(project_names))
+                print('addresss', len(addresss))
+                print('province_codes', len(province_codes))
+                print('district_codes', len(district_codes))
+                print('sub_district_codes', len(sub_district_codes))
+                print('prices', len(prices))
+                print('range_of_house_prices', len(range_of_house_prices))
+                print('area_SQWs', len(area_SQWs))
+                print('floor_numbers', len(floor_numbers))
+                print('floors', len(floors))
+                print('sell_type_ids', len(sell_type_ids))
+                print('source_ids', len(source_ids))
+                print('bedrooms', len(bedrooms))
+                print('bathrooms', len(bathrooms))
+                print('garages', len(garages))
+                print('details', len(details))
+                print('latitudes', len(latitudes))
+                print('longtitudes', len(longtitudes))
+                print('duplicates', len(duplicates))
+                print('news', len(news))
+                print('cross_webs', len(cross_webs))
+                print('cross_refs', len(cross_refs))
+                print('days', len(days))
+                print('months', len(months))
+                print('years', len(years))
+                print('post_dates', len(post_dates))
+                print('seller_names', len(seller_names))
+                print('seller_tels', len(seller_tels))
+                print('seller_emails', len(seller_emails))
+                print('seller_ids', len(seller_ids))
+                print('room_numbers', len(room_numbers))
+                print('house_links', len(house_links))
+                print('type_ids', len(type_ids))
+                print('completion_years', len(completion_years))
+                print('date_times', len(date_times))
 
-    # def fill_list(lst, target_length, fill_value=None):
-    #     return lst + [fill_value] * (target_length - len(lst))
-    #
-    #     # Get the length of the longest list
-    #
-    #
-    # max_length = max(
-    #     len(ids), len(ref_code), len(webs), len(names), len(house_pictures),
-    #     len(project_names), len(addresss), len(province), len(district),
-    #     len(sub_district), len(sub_district_codes), len(district_codes), len(province_codes),
-    #     len(prices), len(range_of_house_prices), len(area), len(area_rai), len(area_Ngan),
-    #     len(area_SQWs), len(floor_numbers), len(floors), len(room_numbers), len(bedrooms),
-    #     len(bathrooms), len(garages), len(latitudes), len(longtitudes), len(details),
-    #     len(seller_names), len(seller_tels), len(seller_emails), len(seller_ids),
-    #     len(house_links), len(type_ids), len(sell_type_ids), len(source_ids), len(duplicates),
-    #     len(news), len(cross_webs), len(cross_refs), len(completion_years), len(years),
-    #     len(months), len(days), len(post_dates), len(date_times)
-    # )
-    #
-    # # Fill all lists to match the maximum length
-    # ids = fill_list(ids, max_length)
-    # ref_code = fill_list(ref_code, max_length)
-    # webs = fill_list(webs, max_length)
-    # names = fill_list(names, max_length)
-    # house_pictures = fill_list(house_pictures, max_length)
-    # project_names = fill_list(project_names, max_length)
-    # addresss = fill_list(addresss, max_length)
-    # province = fill_list(province, max_length)
-    # district = fill_list(district, max_length)
-    # sub_district = fill_list(sub_district, max_length)
-    # sub_district_codes = fill_list(sub_district_codes, max_length)
-    # district_codes = fill_list(district_codes, max_length)
-    # province_codes = fill_list(province_codes, max_length)
-    # prices = fill_list(prices, max_length)
-    # range_of_house_prices = fill_list(range_of_house_prices, max_length)
-    # area = fill_list(area, max_length)
-    # area_rai = fill_list(area_rai, max_length)
-    # area_Ngan = fill_list(area_Ngan, max_length)
-    # area_SQWs = fill_list(area_SQWs, max_length)
-    # floor_numbers = fill_list(floor_numbers, max_length)
-    # floors = fill_list(floors, max_length)
-    # room_numbers = fill_list(room_numbers, max_length)
-    # bedrooms = fill_list(bedrooms, max_length)
-    # bathrooms = fill_list(bathrooms, max_length)
-    # garages = fill_list(garages, max_length)
-    # latitudes = fill_list(latitudes, max_length)
-    # longtitudes = fill_list(longtitudes, max_length)
-    # details = fill_list(details, max_length)
-    # seller_names = fill_list(seller_names, max_length)
-    # seller_tels = fill_list(seller_tels, max_length)
-    # seller_emails = fill_list(seller_emails, max_length)
-    # seller_ids = fill_list(seller_ids, max_length)
-    # house_links = fill_list(house_links, max_length)
-    # type_ids = fill_list(type_ids, max_length)
-    # sell_type_ids = fill_list(sell_type_ids, max_length)
-    # source_ids = fill_list(source_ids, max_length)
-    # duplicates = fill_list(duplicates, max_length)
-    # news = fill_list(news, max_length)
-    # cross_webs = fill_list(cross_webs, max_length)
-    # cross_refs = fill_list(cross_refs, max_length)
-    # completion_years = fill_list(completion_years, max_length)
-    # years = fill_list(years, max_length)
-    # months = fill_list(months, max_length)
-    # days = fill_list(days, max_length)
-    # post_dates = fill_list(post_dates, max_length)
-    # date_times = fill_list(date_times, max_length)
+                property_list = pd.DataFrame({
+                    'ID': ids,
+                    'ref_code': ref_code,
+                    'web': webs,
+                    'name': names,
+                    'project_name': project_names,
+                    'address': addresss,
+                    'subdistrict_code': sub_district_codes,
+                    'district_code': district_codes,
+                    'province_code': province_codes,
+                    'price': prices,
+                    'range_of_house_price': range_of_house_prices,
+                    'area_SQW': area_SQWs,
+                    'floor_number': floor_numbers,
+                    'floor': floors,
+                    'room_number': room_numbers,
+                    'bedroom': bedrooms,
+                    'bathroom': bathrooms,
+                    'garage': garages,
+                    'latitude': latitudes,
+                    'longtitude': longtitudes,
+                    'detail': details,
+                    'seller_name': seller_names,
+                    'seller_tel': seller_tels,
+                    'seller_email': seller_emails,
+                    'seller_id': seller_ids,
+                    'picture': house_pictures,
+                    'house_link': house_links,
+                    'type_id': type_ids,
+                    'sell_type_id': sell_type_ids,
+                    'source_id': source_ids,
+                    'duplicate': duplicates,  # 0
+                    'new': news,  # 1
+                    'cross_web': cross_webs,  # -1
+                    'cross_ref': cross_refs,  # str("None")
+                    'completion_year': completion_years,  # str("None")
+                    'year': years,
+                    'month': months,
+                    'day': days,
+                    'post_date': post_dates,
+                    'date_time': date_times,  # date
+                    'update_date': post_dates,
+                })
 
-    # Create DataFrame and save to CSV
-    property_list = pd.DataFrame({
-        'ID': ids,
-        'ref_code': ref_code,
-        'web': webs,
-        'name': names,
-        'project_name': project_names,
-        'address': addresss,
-        'province': province,
-        'district': district,
-        'sub_district': sub_district,
-        'subdistrict_code': sub_district_codes,
-        'district_code': district_codes,
-        'province_code': province_codes,
-        'price': prices,
-        'range_of_house_price': range_of_house_prices,
-        'area': area,
-        'area_rai': area_rai,
-        'area_Ngan': area_Ngan,
-        'area_SQW': area_SQWs,
-        'floor_number': floor_numbers,
-        'floor': floors,
-        'room_number': room_numbers,
-        'bedroom': bedrooms,
-        'bathroom': bathrooms,
-        'garage': garages,
-        'latitude': latitudes,
-        'longtitude': longtitudes,
-        'detail': details,
-        'seller_name': seller_names,
-        'seller_tel': seller_tels,
-        'seller_email': seller_emails,
-        'seller_id': seller_ids,
-        'picture': house_pictures,
-        'house_link': house_links,
-        'type_id': type_ids,
-        'sell_type_id': sell_type_ids,
-        'source_id': source_ids,
-        'duplicate': duplicates,
-        'new': news,
-        'cross_web': cross_webs,
-        'cross_ref': cross_refs,
-        'completion_year': completion_years,
-        'year': years,
-        'month': months,
-        'day': days,
-        'post_date': post_dates,
-        'date_time': date_times,
-        'update_date': post_dates,
-    })
+                property_list.to_csv(path_files + '/' + web + "_" + prop_type + '.csv')
+                print('Export', len(ids), 'Rows To CSV File Completed!!!! ')
+                print('Start At ', _start_date)
+                print('Success At ', datetime.now())
 
-    property_list.to_csv(path_Files + '/' + web + '.csv', index=False)
-    print('Export', len(ids), 'Rows To CSV File Completed!!!!')
+                # ไม่ต้องเรียก reset_list() ซ้ำตรงนี้แล้ว
+                property_list = None
+
+                # break
+
+            # send line message on success.
+            fn.send_message(date, web)
