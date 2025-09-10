@@ -9,6 +9,12 @@ source myenv/bin/activate
 pip install -r requirements.txt
 ```
 
+## Allow execute script
+``` shell
+# pi
+chmod +x /home/dev-team/Desktop/scraping/crontab/pi/*.sh 
+```
+
 ## Pi Crontab
 ``` shell
 # everyday at 06:00
