@@ -29,7 +29,7 @@ base_url = "https://www.hongpak.in.th/list/?k=%E0%B8%81%E0%B8%A3%E0%B8%B8%E0%B8%
 
 # +++++++++++++ แก้ข้อมูลเพื่อเก็บข้อมูล +++++++++++++ #
 web = "hongpak"
-get_types = ['DATA'] #'LINK', 'DATA'
+get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
 # date = datetime(2025, 6, 20).strftime('%Y-%m-%d') # manual
 date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
@@ -542,6 +542,9 @@ if __name__ == '__main__':
                 property_list = None
 
                 # break
+                
+            # check data
+            fn.check_data(date, web)
 
             # send line message on success.
             fn.send_message(date, web)

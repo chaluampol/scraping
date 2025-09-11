@@ -673,5 +673,8 @@ if __name__ == '__main__':
 
                 # break
 
+            # check data
+            fn.check_data(date, web)
+            
             # send line message on success.
             fn.send_message(date, web)

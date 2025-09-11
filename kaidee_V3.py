@@ -26,7 +26,7 @@ ua = UserAgent()
 
 
 # base_url = "https://baan.kaidee.com/placeholder_property_sell_rentplaceholder_type/p-placeholder_page/?condition=2&sort=latest"
-base_url = "https://baan.kaidee.com/placeholder_type/p-placeholder_page?condition=2&sort=latest"
+base_url = "https://baan.kaidee.com/placeholder_type/p-placeholder_page?condition=2&ad_type=placeholder_ad_type&sort=latest"
 # https://baan.kaidee.com/c15-realestate-home/p-2?condition=2&sort=latest
 
 # +++++++++++++ แก้ข้อมูลเพื่อเก็บข้อมูล +++++++++++++ #
@@ -37,12 +37,12 @@ date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
 
 property_type = {
-    "home"          : {"type_id": 1, "route": "c15-realestate-home", "property_sell_rent": "", "start": 1, "end": 24},
-    "condo"         : {"type_id": 2, "route": "c17-realestate-condo", "property_sell_rent": "", "start": 1, "end": 72},
-    "townhouse"     : {"type_id": 3, "route": "c16-realestate-townhouse", "property_sell_rent": "", "start": 1, "end": 22}
-    # "home_rent"     : {"type_id": 1, "route": "c15-realestate-home", "property_sell_rent": "for-rent/", "start": 1, "end": 2},
-    # "condo_rent"    : {"type_id": 2, "route": "c17-realestate-condo", "property_sell_rent": "for-rent/", "start": 1, "end": 2},
-    # "townhouse_rent": {"type_id": 3, "route": "c16-realestate-townhouse", "property_sell_rent": "for-rent/", "start": 1, "end": 2}
+    "home"          : {"type_id": 1, "route": "c15-realestate-home", "property_sell_rent": "", "ad_type": "2", "start": 1, "end": 24}, # ad_type=2
+    "condo"         : {"type_id": 2, "route": "c17-realestate-condo", "property_sell_rent": "", "ad_type": "2", "start": 1, "end": 72}, # ad_type=2
+    "townhouse"     : {"type_id": 3, "route": "c16-realestate-townhouse", "property_sell_rent": "", "ad_type": "2", "start": 1, "end": 22}, # ad_type=2
+    "home_rent"     : {"type_id": 1, "route": "c15-realestate-home", "property_sell_rent": "for-rent/", "ad_type": "4", "start": 1, "end": 2}, # ad_type=4
+    "condo_rent"    : {"type_id": 2, "route": "c17-realestate-condo", "property_sell_rent": "for-rent/", "ad_type": "4", "start": 1, "end": 2}, # ad_type=4
+    "townhouse_rent": {"type_id": 3, "route": "c16-realestate-townhouse", "property_sell_rent": "for-rent/", "ad_type": "4", "start": 1, "end": 2} # ad_type=4
 }
 
 
@@ -490,8 +490,9 @@ def save_list_links(prop_type,scraper):
     start_page = property_type[prop_type]["start"]
     end_page = property_type[prop_type]["end"] + 1
     route = property_type[prop_type]["route"]
+    ad_type = property_type[prop_type]["ad_type"]
     # list_type = property_type[prop_type]["property_sell_rent"]
-    req_url = base_url.replace("placeholder_type", route)
+    req_url = base_url.replace("placeholder_type", route).replace("placeholder_ad_type", ad_type)
         # .replace("placeholder_property_sell_rent", str(list_type))
 
     for i in tqdm(range(start_page, end_page)):
@@ -631,6 +632,9 @@ if __name__ == '__main__':
                 property_list = None
 
                 # break
+                
+            # check data
+            fn.check_data(date, web)
 
             # send line message on success.
             fn.send_message(date, web)

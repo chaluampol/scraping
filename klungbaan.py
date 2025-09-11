@@ -21,16 +21,16 @@ ua = UserAgent()
 # +++++++++++++ แก้ข้อมูลเพื่อเก็บข้อมูล +++++++++++++ #
 web = 'klungbaan'
 get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
-# date = datetime(2025, 6, 20).strftime('%Y-%m-%d') # manual
+# date = datetime(2025, 9, 8).strftime('%Y-%m-%d') # manual
 date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
 
 # +++++++++++++ ประเภททรัพย์ +++++++++++++ #
 property_type = {
-    # "home": {"type_id": 1, "route": "single-house", "link_web": "www", "list_type": "sale", "start": 1, "end": 27},
-    # "condo": {"type_id": 2, "route": "condo", "link_web": "www", "list_type": "sale", "start": 1, "end": 16},
-    # "townhouse": {"type_id": 3, "route": "townhome", "link_web": "www", "list_type": "sale", "start": 1, "end": 24},
-    # #
+    "home": {"type_id": 1, "route": "single-house", "link_web": "www", "list_type": "sale", "start": 1, "end": 27},
+    "condo": {"type_id": 2, "route": "condo", "link_web": "www", "list_type": "sale", "start": 1, "end": 16},
+    "townhouse": {"type_id": 3, "route": "townhome", "link_web": "www", "list_type": "sale", "start": 1, "end": 24},
+    # # #
     "home_rent": {"type_id": 1, "route": "single-house", "link_web": "rent", "list_type": "rent", "start": 1, "end": 5},
     "condo_rent": {"type_id": 2, "route": "condo", "link_web": "rent", "list_type": "rent", "start": 1, "end": 7},
     "townhouse_rent": {"type_id": 3, "route": "townhome", "link_web": "rent", "list_type": "rent", "start": 1, "end": 4}
@@ -553,6 +553,9 @@ if __name__ == '__main__':
                 property_list = None
 
                 # break
+                
+            # check data
+            fn.check_data(date, web)
 
             # send line message on success.
             fn.send_message(date, web)

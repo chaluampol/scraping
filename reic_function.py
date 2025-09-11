@@ -5,6 +5,12 @@ import platform
 import requests
 from dotenv import load_dotenv
 from pathlib import Path
+import matplotlib.pyplot as plt
+
+
+# print(platform.system())
+# Windows
+# Darwin
 
 load_dotenv()
 
@@ -209,6 +215,7 @@ def build_massage(date: str, web: str):
     project_root = Path(__file__).resolve().parent
     path_link = str(project_root) + "/links/" + date + "/"  + web + "/"
     path_data = str(project_root) + "/Files/" + date + "/"  + web + "/"
+    path_logs = str(project_root) + "/logs/"+ date + "_" + web + "_result_table.txt"
 
     files = [f for f in os.listdir(path_link) if os.path.isfile(os.path.join(path_link, f))]
 
@@ -241,6 +248,10 @@ def build_massage(date: str, web: str):
         _noti_massage += "\n" + _icon + _property_type
         _noti_massage += "\n=> " + " " + _link_msg + " " +  _data_msg
 
+    with open(path_logs, "r", encoding="utf-8") as f:
+        content = f.read()
+        _noti_massage += "\n" + content
+
     _noti_massage += "\n##### " + web + " #####"
     return _noti_massage
 
@@ -261,12 +272,69 @@ def send_message(date: str, web: str):
     }
 
     res_line_msg = requests.post(url, headers=headers, json=data)
-
     if res_line_msg.status_code == 200:
         print("Line: Message sent successfully!")
     else:
         print(f"Line: Failed to send message: {res_line_msg.status_code}, {res_line_msg.text}")
 
-# print(platform.system())
-# Windows
-# Darwin
+def check_data(date: str, web: str):
+    data_of_web_list = {
+        "baanfinder": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price', 'area_SQW', 'area_SQM', 'sell_type_id', 'bedroom', 'bathroom', 'garage', 'detail', 'latitude', 'longtitude', 'picture', 'source_id', 'house_link', 'seller_name', 'seller_tel', 'floor', 'floor_number', 'completion_year'],
+        "baania": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price', 'area_SQM', 'area_SQW', 'seller_tel', 'seller_name', 'seller_email', 'sell_type_id', 'room_number', 'bedroom', 'bathroom', 'garage', 'detail', 'latitude', 'longtitude', 'floor', 'floor_number', 'picture'],
+        "bangkokassets": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price', 'picture', 'bedroom', 'bathroom', 'detail', 'latitude', 'longtitude', 'area_SQM', 'area_SQW', 'floor', 'floor_number', 'seller_name', 'seller_tel', 'seller_email'],
+        "ddproperty": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price', 'picture', 'area_SQW', 'area_SQM', 'bedroom', 'bathroom', 'latitude', 'longtitude', 'floor_number', 'seller_name', 'seller_email', 'seller_tel', 'completion_year'],
+        "dotproprety": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price','picture', 'bedroom', 'bathroom', 'area_SQW', 'area_SQM', 'detail', 'floor', 'floor_number', 'seller_name'],
+        "fazwaz": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price','picture', 'area_SQM', 'area_SQW', 'bedroom', 'bathroom', 'garage', 'completion_year', 'floor', 'floor_number', 'detail'],
+        "homemarket": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price','picture', 'area_SQW', 'area_SQM', 'seller_name', 'seller_tel', 'bedroom', 'bathroom', 'detail'],
+        "hongpak": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price','picture', 'area_SQM', 'area_SQW', 'bedroom', 'bathroom', 'floor', 'floor_number', 'detail', 'seller_tel', 'latitude', 'longtitude'],
+        "interhome": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price','picture', 'bedroom', 'bathroom', 'area_SQM', 'area_SQW', 'detail', 'seller_name', 'seller_tel', 'floor', 'latitude', 'longtitude'],
+        "kaidee": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price','picture', 'bedroom', 'bathroom', 'area_SQW', 'area_SQM', 'detail', 'seller_name', 'seller_tel', 'seller_email', 'latitude', 'longtitude'],
+        "klungbaan": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price','picture', 'area_SQM', 'area_SQW', 'floor_number', 'floor', 'bedroom', 'bathroom', 'garage', 'detail', 'latitude', 'longtitude', 'seller_name', 'seller_tel', 'seller_email'],
+        "livinginsider": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price','picture','area_SQW', 'area_SQM', 'bedroom', 'bathroom', 'floor', 'floor_number', 'detail', 'seller_name', 'latitude', 'longtitude'],
+        "propertyhub": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'range_of_house_price','picture','bedroom', 'bathroom', 'area_SQW', 'area_SQM', 'detail', 'seller_name', 'seller_tel', 'latitude', 'longtitude'],
+        "propertyscout": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'bedroom', 'bathroom', 'detail', 'latitude', 'longtitude', 'area_SQM', 'area_SQW', 'floor', 'floor_number'],
+        "terrabkk": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price','area_SQW', 'area_SQM', 'bedroom', 'bathroom', 'garage', 'detail', 'latitude', 'longtitude', 'seller_name', 'seller_tel', 'floor', 'floor_number'],
+        "thaihometown": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'area_SQM', 'area_SQW', 'bedroom', 'bathroom', 'latitude', 'longtitude', 'garage', 'detail', 'seller_name', 'seller_tel'],
+        "thaihometownland": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'ref_code', 'area_SQW', 'bedroom', 'bathroom', 'latitude', 'longtitude', 'garage', 'detail', 'seller_name', 'seller_tel'],
+        "TheBestProperty": ['name', 'project_name', 'address', 'province_code', 'district_code', 'subdistrict_code', 'price', 'bedroom', 'bathroom', 'area_SQW', 'area_SQM', 'detail', 'floor', 'floor_number', 'latitude', 'longtitude']
+    }
+
+    web_process = data_of_web_list[web]
+
+    project_root = Path(__file__).resolve().parent
+    path_link = str(project_root) + "/links/" + date + "/"  + web + "/"
+    path_data = str(project_root) + "/Files/" + date + "/"  + web + "/"
+    files = [f for f in os.listdir(path_link) if os.path.isfile(os.path.join(path_link, f))]
+
+    # DataFrame สำหรับรวมผลลัพธ์
+    result_df = pd.DataFrame({"Column": web_process})
+
+    # วนลูปแต่ละไฟล์
+    for file_path in files:
+        _property_type = str(file_path).replace("links_", "").replace("link_", "").replace(".txt", "")
+        file_data_path = Path(path_data + '/' + web + "_" + _property_type + ".csv")
+        df = pd.read_csv(file_data_path)
+        # file_name = os.path.basename(file_data_path)  # ดึงเฉพาะชื่อไฟล์
+        
+        # คำนวณ %
+        percentages = {}
+        for col in web_process:
+            if col in df.columns:
+                total = len(df)
+                not_none_count = (df[col].astype(str).str.lower() != 'none').sum()
+                percentages[col] = round((not_none_count / total) * 100, 2)
+            else:
+                percentages[col] = None  # ถ้าไม่มี column นี้
+        
+        # แปลงเป็น DataFrame แล้ว merge
+        temp_df = pd.DataFrame(list(percentages.items()), columns=["Column", _property_type])
+        result_df = result_df.merge(temp_df, on="Column", how="left")
+
+    print(result_df)
+
+    path_logs = os.path.join("logs")
+    os.makedirs(path_logs, exist_ok=True)
+
+    output_txt_path = str(project_root) + "/logs/"+ date + "_" + web + "_result_table.txt"
+    with open(output_txt_path, "w", encoding="utf-8") as f:
+        f.write("```\n" + result_df.to_string(index=False) + "\n```")

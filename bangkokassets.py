@@ -35,9 +35,9 @@ property_type = {
     "home"      : { "type_id": 1, "route": "1", "full_type": 1, "start": 1, "end": 21 },
     "condo"     : { "type_id": 2, "route": "4", "full_type": 1, "start": 1, "end": 21 },
     "townhouse" : { "type_id": 3, "route": "3", "full_type": 1, "start": 1, "end": 21 },
-    # "home_rent"      : { "type_id": 1, "route": "1", "full_type": 2, "start": 1, "end": 100 },
-    # "condo_rent"     : { "type_id": 2, "route": "4", "full_type": 2, "start": 1, "end": 70 },
-    # "townhouse_rent" : { "type_id": 3, "route": "3", "full_type": 2, "start": 1, "end": 250 }
+    "home_rent"      : { "type_id": 1, "route": "1", "full_type": 2, "start": 1, "end": 5 },
+    "condo_rent"     : { "type_id": 2, "route": "4", "full_type": 2, "start": 1, "end": 5 },
+    "townhouse_rent" : { "type_id": 3, "route": "3", "full_type": 2, "start": 1, "end": 2 }
 }
 # ---- Path ----
 path_links = os.path.join("links", date, web)
@@ -534,6 +534,9 @@ if __name__ == '__main__':
                 property_list = None
 
                 # break
+
+            # check data
+            fn.check_data(date, web)
 
             # send line message on success.
             fn.send_message(date, web)

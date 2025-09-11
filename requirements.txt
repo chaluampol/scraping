@@ -11,3 +11,4 @@ pyautogui
 pyperclip
 cloudscraper
 geckodriver-autoinstaller
+matplotlib

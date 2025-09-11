@@ -24,7 +24,7 @@ date = datetime.today().strftime('%Y-%m-%d')
 # print(date)
 
 property_type = {
-#    'home'          : {'type_id': 1, 'type_value': 'B', 'route': 'BUNG', "property_sell_rent": 'รวมประกาศขาย', 'listing_type': 'sell', 'start': 1, 'end': 50},
+    'home'          : {'type_id': 1, 'type_value': 'B', 'route': 'BUNG', "property_sell_rent": 'รวมประกาศขาย', 'listing_type': 'sell', 'start': 1, 'end': 50},
     'condo'         : {'type_id': 2, 'type_value': 'N', 'route': 'CONDO', "property_sell_rent": 'รวมประกาศขาย', 'listing_type': 'sell', 'start': 1, 'end': 75},
     'townhouse'     : {'type_id': 3, 'type_value': 'T', 'route': 'TOWN', "property_sell_rent": 'รวมประกาศขาย', 'listing_type': 'sell', 'start': 1, 'end': 25},
     'home_rent'     : {'type_id': 1, 'type_value': 'B', 'route': 'BUNG', "property_sell_rent": 'รวมประกาศให้เช่า', 'listing_type': 'rent', 'start': 1, 'end': 30},
@@ -707,6 +707,9 @@ if __name__ == '__main__':
                 property_list = None
 
                 # break
+
+            # check data
+            fn.check_data(date, web)
 
             # send line message on success.
             fn.send_message(date, web)

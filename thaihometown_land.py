@@ -30,14 +30,14 @@ base_url ="https://www.thaihometown.com/search/?page=placeholder_page&FormType=S
 
 # +++++++++++++ แก้ข้อมูลเพื่อเก็บข้อมูล +++++++++++++ #
 web = 'thaihometownland'
-get_types = ['DATA'] #'LINK', 'DATA'
+get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
 # date = datetime(2025, 6, 20).strftime('%Y-%m-%d') # manual
 date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
 
 property_type = {
     # "Land": {"type_id": 1, "route": "Land", "r_type": "land", "start": 368 ,"end": 490} 
-    "Land": {"type_id": 1, "route": "Land", "r_type": "land", "start": 1 ,"end": 1} 
+    "Land": {"type_id": 1, "route": "Land", "r_type": "land", "start": 368 ,"end": 490} 
     # 355-366 #ผ่าน  45
     # ไม่ผ่าน
 }
@@ -703,6 +703,9 @@ if __name__ == '__main__':
                 property_list = None
 
                 # break
+                
+            # check data
+            fn.check_data(date, web)
 
             # send line message on success.
             fn.send_message(date, web)

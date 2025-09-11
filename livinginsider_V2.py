@@ -17,14 +17,16 @@ import platform
 # import schedule
 import time
 import ssl
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # set ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 ua = UserAgent()
 
-web = "livinginsider"
 base_url = "https://www.livinginsider.com/searchword/placeholder_type/placeholder_sale_type/placeholder_page/placeholder_full_type"
 # ****** วันที่เก็บข้อมูล ****** #
+web = "livinginsider"
 get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
 # date = datetime(2025, 6, 20).strftime('%Y-%m-%d') # manual
 date = datetime.today().strftime('%Y-%m-%d') # auto
@@ -34,13 +36,12 @@ _month = date_now.split("-")[1]
 _year = date_now.split("-")[0]
 
 property_type = {
-    # "home": {"type_id": 1, "route": "Home", "sale_type": 'Buysell',"full_type": 'รวมประกาศ-ขาย-บ้าน.html', "start": 1, "end": 200},
-    # "condo": {"type_id": 2, "route": "Condo","sale_type": 'Buysell',"full_type": 'รวมประกาศ-ขาย-คอนโด.html', "start": 10, "end": 200},
-    # "townhouse": {"type_id": 3, "route": "Townhome","sale_type": 'Buysell', "full_type": 'รวมประกาศ-ขาย-ทาวน์เฮ้าส์-ทาวน์โฮม.html', "start": 10, "end": 139},
-    # # # # # #
-    "home_rent": {"type_id": 1, "route": "Home", "sale_type": 'Rent',"full_type": 'รวมประกาศ-เช่า-บ้าน.html', "start": 1, "end": 78},
-    "condo_rent": {"type_id": 2, "route": "Condo","sale_type": 'Rent',"full_type": 'รวมประกาศ-เช่า-คอนโด.html', "start": 1, "end": 250},
-    "townhouse_rent": {"type_id": 3, "route": "Townhome","sale_type": 'Rent', "full_type": 'รวมประกาศ-เช่า-ทาวน์เฮ้าส์-ทาวน์โฮม.html', "start": 1, "end": 37}
+    "home": {"type_id": 1, "route": "Home", "sale_type": 'Buysell',"full_type": 'รวมประกาศ-ขาย-บ้าน.html', "start": 1, "end": 35},
+    "condo": {"type_id": 2, "route": "Condo","sale_type": 'Buysell',"full_type": 'รวมประกาศ-ขาย-คอนโด.html', "start": 1, "end": 100},
+    "townhouse": {"type_id": 3, "route": "Townhome","sale_type": 'Buysell', "full_type": 'รวมประกาศ-ขาย-ทาวน์เฮ้าส์-ทาวน์โฮม.html', "start": 1, "end": 20},
+    "home_rent": {"type_id": 1, "route": "Home", "sale_type": 'Rent',"full_type": 'รวมประกาศ-เช่า-บ้าน.html', "start": 1, "end": 15},
+    "condo_rent": {"type_id": 2, "route": "Condo","sale_type": 'Rent',"full_type": 'รวมประกาศ-เช่า-คอนโด.html', "start": 1, "end": 100},
+    "townhouse_rent": {"type_id": 3, "route": "Townhome","sale_type": 'Rent', "full_type": 'รวมประกาศ-เช่า-ทาวน์เฮ้าส์-ทาวน์โฮม.html', "start": 1, "end": 10}
 }
 
 thai_full_months = [
@@ -219,13 +220,21 @@ def save_list_links(prop_type):
     req_url = base_url.replace("placeholder_type", route).replace("placeholder_full_type", route_type).replace("placeholder_sale_type", str(list_type))
 
     for i in tqdm(range(start_page, end_page)):
-        Headers = {'User-Agent': ua.random}
+        # Headers = {'User-Agent': ua.random}
         wait_time = 0.25
         url = req_url.replace("placeholder_page", str(i))
         # print(url)
-        req = requests.get(url, headers=Headers)
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': ua.random
+        })
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+        session.mount("https://", HTTPAdapter(max_retries=retries))
+
+        # req = requests.get(url, headers=Headers, timeout=10)
+        req = session.get(url, timeout=10)
         while req.status_code != 200:
-            req = requests.get(url, headers=Headers)
+            req = session.get(url, timeout=10)
 
         all_links = extract_links(req.text)
         file_links = codecs.open(path_links + f"/links_{prop_type}.txt", "a+", "utf-8")
@@ -264,9 +273,18 @@ def loop_links(prop_type):
 
 
 def get_data(prop_url, type_id, ID):
-    Headers = {'User-Agent': ua.random}
+    # Headers = {'User-Agent': ua.random}
     sleep(0.9)
-    req = requests.get(prop_url, headers=Headers)
+
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': ua.random
+    })
+    retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+    session.mount("https://", HTTPAdapter(max_retries=retries))
+
+    # req = requests.get(prop_url, headers=Headers, timeout=10)
+    req = session.get(prop_url, timeout=10)
     req.encoding = "utf-8"
 
     soup = BeautifulSoup(req.text, 'html.parser')
@@ -579,6 +597,9 @@ if __name__ == "__main__":
                 property_list = None
 
                 # break
+                
+            # check data
+            fn.check_data(date, web)
 
             # send line message on success.
             fn.send_message(date, web)

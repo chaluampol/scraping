@@ -24,7 +24,7 @@ ua = UserAgent()
 
 
 # base_url = "https://www.dotproperty.co.th/placeholder_type?sort=newest&page=placeholder_page%22"
-base_url = "https://www.dotproperty.co.th/placeholder_type?page=placeholder_page"
+base_url = "https://www.dotproperty.co.th/placeholder_type?page=placeholder_page&sortBy=verification_at%7Cdesc"
 # +++++++++++++ แก้ข้อมูลเพื่อเก็บข้อมูล +++++++++++++ #
 web = 'dotproprety'
 get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
@@ -561,6 +561,9 @@ if __name__ == '__main__':
                 property_list = None
 
                 # break
+                
+            # check data
+            fn.check_data(date, web)
 
             # send line message on success.
             fn.send_message(date, web)
