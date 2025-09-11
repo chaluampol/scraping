@@ -311,24 +311,27 @@ def check_data(date: str, web: str):
 
     # วนลูปแต่ละไฟล์
     for file_path in files:
-        _property_type = str(file_path).replace("links_", "").replace("link_", "").replace(".txt", "")
-        file_data_path = Path(path_data + '/' + web + "_" + _property_type + ".csv")
-        df = pd.read_csv(file_data_path)
-        # file_name = os.path.basename(file_data_path)  # ดึงเฉพาะชื่อไฟล์
-        
-        # คำนวณ %
-        percentages = {}
-        for col in web_process:
-            if col in df.columns:
-                total = len(df)
-                not_none_count = (df[col].astype(str).str.lower() != 'none').sum()
-                percentages[col] = round((not_none_count / total) * 100, 2)
-            else:
-                percentages[col] = None  # ถ้าไม่มี column นี้
-        
-        # แปลงเป็น DataFrame แล้ว merge
-        temp_df = pd.DataFrame(list(percentages.items()), columns=["Column", _property_type])
-        result_df = result_df.merge(temp_df, on="Column", how="left")
+        try:
+            _property_type = str(file_path).replace("links_", "").replace("link_", "").replace(".txt", "")
+            file_data_path = Path(path_data + '/' + web + "_" + _property_type + ".csv")
+            df = pd.read_csv(file_data_path)
+            # file_name = os.path.basename(file_data_path)  # ดึงเฉพาะชื่อไฟล์
+            
+            # คำนวณ %
+            percentages = {}
+            for col in web_process:
+                if col in df.columns:
+                    total = len(df)
+                    not_none_count = (df[col].astype(str).str.lower() != 'none').sum()
+                    percentages[col] = round((not_none_count / total) * 100, 2)
+                else:
+                    percentages[col] = None  # ถ้าไม่มี column นี้
+            
+            # แปลงเป็น DataFrame แล้ว merge
+            temp_df = pd.DataFrame(list(percentages.items()), columns=["Column", _property_type])
+            result_df = result_df.merge(temp_df, on="Column", how="left")
+        except Exception as err:
+            print('Loop file error:', err)
 
     print(result_df)
 
