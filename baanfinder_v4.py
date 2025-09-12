@@ -21,7 +21,17 @@ import logging
 from playwright.sync_api import sync_playwright
 
 ssl._create_default_https_context = ssl._create_unverified_context
-base_url = "https://www.baanfinder.com/th/%E0%B8%82%E0%B8%B2%E0%B8%A2?placeholder_type&page=placeholder_page"
+# base_url = "https://www.baanfinder.com/th/%E0%B8%82%E0%B8%B2%E0%B8%A2?placeholder_type&page=placeholder_page"
+base_url = "https://www.baanfinder.com/property_sell_rentplaceholder_main_type?sortBy=lastBumpedDate&sortOrder=desc"
+
+            # property_sell_rent ขาย,เช่า
+            # placeholder_main_type = บ้าน,คอนโด,ทาวน์เฮ้าส์-ทาวน์โฮม
+            # https://www.baanfinder.com/ขายบ้าน?page=2&types=บ้านเดี่ยว&types=บ้านแฝด
+            # https://www.baanfinder.com/ขายคอนโด?page=2
+            # https://www.baanfinder.com/ขายทาวน์เฮ้าส์-ทาวน์โฮม?page=2
+            # https://www.baanfinder.com/เช่าบ้าน?page=2&types=บ้านเดี่ยว&types=บ้านแฝด
+            # https://www.baanfinder.com/เช่าคอนโด?page=2
+            # https://www.baanfinder.com/เช่าทาวน์เฮ้าส์-ทาวน์โฮม?page=2
 
 web = "baanfinder"
 get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
@@ -29,12 +39,19 @@ get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
 date = datetime.today().strftime('%Y-%m-%d')
 date_now = fn.get_date_now()
 property_type = {
-    "home": {"type_id": 1, "route": "types=บ้านเดี่ยว&types=บ้านแฝด", "property_sell_rent": 'ขาย', "start": 1, "end": 30},
-    "condo": {"type_id": 2, "route": "types=คอนโด", "property_sell_rent": 'ขาย', "start": 1, "end": 70},
-    "townhouse": {"type_id": 3, "route": "types=ทาวน์เฮ้าส์-ทาวน์โฮม", "property_sell_rent": 'ขาย', "start": 1, "end": 30},
-    "home_rent": {"type_id": 1, "route": "types=บ้านเดี่ยว&types=บ้านแฝด", "property_sell_rent": 'ให้เช่า', "start": 1, "end": 30},
-    "condo_rent": {"type_id": 2, "route": "types=คอนโด", "property_sell_rent": 'ให้เช่า', "start": 1, "end": 100},
-    "townhouse_rent": {"type_id": 3, "route": "types=ทาวน์เฮ้าส์-ทาวน์โฮม", "property_sell_rent": 'ให้เช่า', "start": 1, "end": 30}
+    # "home": {"type_id": 1, "route": "types=บ้านเดี่ยว&types=บ้านแฝด", "property_sell_rent": 'ขาย', "start": 1, "end": 30},
+    # "condo": {"type_id": 2, "route": "types=คอนโด", "property_sell_rent": 'ขาย', "start": 1, "end": 70},
+    # "townhouse": {"type_id": 3, "route": "types=ทาวน์เฮ้าส์-ทาวน์โฮม", "property_sell_rent": 'ขาย', "start": 1, "end": 30},
+    # "home_rent": {"type_id": 1, "route": "types=บ้านเดี่ยว&types=บ้านแฝด", "property_sell_rent": 'ให้เช่า', "start": 1, "end": 30},
+    # "condo_rent": {"type_id": 2, "route": "types=คอนโด", "property_sell_rent": 'ให้เช่า', "start": 1, "end": 100},
+    # "townhouse_rent": {"type_id": 3, "route": "types=ทาวน์เฮ้าส์-ทาวน์โฮม", "property_sell_rent": 'ให้เช่า', "start": 1, "end": 30}
+
+    "home":         {"type_id": 1, "property_sell_rent": 'ขาย', "main_type": 'บ้าน', "route": "types=บ้านเดี่ยว&types=บ้านแฝด", "start": 1, "end": 30},
+    "condo":        {"type_id": 2, "property_sell_rent": 'ขาย', "main_type": 'คอนโด', "route": "types=คอนโด", "start": 1, "end": 70},
+    "townhouse":    {"type_id": 3, "property_sell_rent": 'ขาย', "main_type": 'ทาวน์เฮ้าส์-ทาวน์โฮม', "route": "types=ทาวน์เฮ้าส์-ทาวน์โฮม", "start": 1, "end": 30},
+    "home_rent":         {"type_id": 1, "property_sell_rent": 'เช่า', "main_type": 'บ้าน', "route": "types=บ้านเดี่ยว&types=บ้านแฝด", "start": 1, "end": 30},
+    "condo_rent":        {"type_id": 2, "property_sell_rent": 'เช่า', "main_type": 'คอนโด', "route": "types=คอนโด", "start": 1, "end": 100},
+    "townhouse_rent":    {"type_id": 3, "property_sell_rent": 'เช่า', "main_type": 'ทาวน์เฮ้าส์-ทาวน์โฮม', "route": "types=ทาวน์เฮ้าส์-ทาวน์โฮม", "start": 1, "end": 30},
 }
 
 thai_months_abbr = [
@@ -247,8 +264,8 @@ def get_page_content(url: str = ""):
         browser = p.chromium.launch(
             headless=True,
             #executable_path="C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe" # windows
-            executable_path="/usr/bin/chromium" # ubuntu, raspberry pi os
-            # executable_path="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" # macos
+            # executable_path="/usr/bin/chromium" # ubuntu, raspberry pi os
+            executable_path="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" # macos
         )
 
         context = browser.new_context(**base_device)
@@ -284,14 +301,20 @@ def save_list_links(prop_type):
     end_page = property_type[prop_type]["end"] + 1
     route = property_type[prop_type]["route"]
     list_type = property_type[prop_type]["property_sell_rent"]
+    main_type = property_type[prop_type]["main_type"]
     # req_url = base_url.replace("placeholder_type", route)
+    req_url = base_url.replace("property_sell_rent", list_type).replace("placeholder_main_type", main_type)
+    if prop_type == "home":
+        req_url += "&" + route
 
     for i in tqdm(range(start_page, end_page)):
-        url = f'https://www.baanfinder.com/th/{list_type}?{route}&page={i}'
+        # url = f'https://www.baanfinder.com/th/{list_type}?{route}&page={i}'
         # print(url)
         # print(scraper.get(url).status_code)
         # html = scraper.get(url).text
-        html = get_page_content(url)
+        req_url += "&page=" + str(i)
+        # print(req_url)
+        html = get_page_content(req_url)
         soup = BeautifulSoup(html, 'html.parser')
         _listings = soup.find_all('div', class_='resEntry')
 
@@ -452,8 +475,10 @@ def get_data(prop_url, type_id, ID):
                     garages.append('none')
 
                 try:
-                    _detail = soup.find("div", class_='detailedInfo').find('div', class_='detailedInfo').text\
+                    # print(soup.find("div", id='js-detailed-info').text)
+                    _detail = soup.find("div", id='js-detailed-info').text\
                                 .replace(',','').replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').strip()
+                    
                     details.append(_detail)
                 except Exception as err:
                     details.append('none')
@@ -474,7 +499,7 @@ def get_data(prop_url, type_id, ID):
                 cross_refs.append('none')
 
                 try:
-                    house_pictures.append(soup.find('img', {'u': 'image'})['src2'])
+                    house_pictures.append(soup.find('div', class_="swiper-slide-active").find('img')['src'])
                 except Exception as err:
                     house_pictures.append('none')
 
@@ -487,15 +512,20 @@ def get_data(prop_url, type_id, ID):
                 type_ids.append(int(type_id))
 
                 try:
-                    seller_names.append(
-                        str(soup.find('span', class_='reveal-contact-label-section').next_sibling.replace('\n', '').replace(
-                            ':',
-                            '')))
+                    contact_details = soup.find('div', id='contactRes-2').parent.find('div', class_="media-list")
+                    _seller_name = contact_details.find('div', class_="text-truncate").text.strip()
+                    seller_names.append(_seller_name)
                 except Exception as err:
                     seller_names.append('none')
 
                 try:
-                    seller_tels.append(str(soup.find('span', class_='js-reveal-phone').a.text.replace('-', '')))
+                    _seller_tel = 'none'
+                    for script in soup.find_all("script"):
+                        if script.string and "contactPhoneNumber" in script.string:
+                            match = re.search(r'contactPhoneNumber:\s*"([^"]+)"', script.string)
+                            if match:
+                                _seller_tel = match.group(1).strip()
+                    seller_tels.append(_seller_tel)
                 except Exception as err:
                     seller_tels.append('none')
 
