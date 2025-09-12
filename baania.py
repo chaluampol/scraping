@@ -349,13 +349,11 @@ def get_data(prop_url, type_id, ID):
             details.append('none')
 
         try:
-            latitudes.append(_prop_data['location']['lat'])
+            coordinates = _data_json['props']['pageProps']['listing']['geopoint']['coordinates']
+            latitudes.append(coordinates[1])
+            longtitudes.append(coordinates[0])
         except Exception as err:
             latitudes.append('none')
-
-        try:
-            longtitudes.append(_prop_data['location']['lon'])
-        except Exception as err:
             longtitudes.append('none')
 
         duplicates.append(_o)
