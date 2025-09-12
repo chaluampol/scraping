@@ -264,8 +264,8 @@ def get_page_content(url: str = ""):
         browser = p.chromium.launch(
             headless=True,
             #executable_path="C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe" # windows
-            # executable_path="/usr/bin/chromium" # ubuntu, raspberry pi os
-            executable_path="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" # macos
+            executable_path="/usr/bin/chromium" # ubuntu, raspberry pi os
+            # executable_path="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" # macos
         )
 
         context = browser.new_context(**base_device)
