@@ -43,7 +43,7 @@ base_url = 'https://www.interhome.co.th/result.php?resulttype=Search&proptype=pl
 
 # +++++++++++++ แก้ข้อมูลเพื่อเก็บข้อมูล +++++++++++++ #
 web = 'interhome'
-get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
+get_types = ['LINK','DATA'] #'LINK', 'DATA'
 # date = datetime(2025, 6, 20).strftime('%Y-%m-%d') # manual
 date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
@@ -272,16 +272,17 @@ def get_data(prop_url, type_id):
 
         try:
             _address = soup.find('div', class_='property-detail mt-20px').get_text().split('ที่ตั้ง :')[1].split('รายละเอียด')[0]
-            _locationss =_address.trim().split()
-            _locationss =  _address.trim().split()
+            _locationss =_address.split()
+            _locationss =  _address.split()
             _province_codes  = _locationss[-1]
             _district_codes =  _locationss[-2]
             # print(_province_codes,_district_codes)
             _sub_district_codes = "none"
             _prv, _dis, _subdis = fn.prov_dis_subdis(_province_codes,_district_codes,_sub_district_codes)
-            addresss.append(_address.trim())
+            addresss.append(_address)
+            # print(addresss)
             province_codes.append(int(_prv))
-            # print(province_codes)
+            # print(addresss)
             district_codes.append(int(_dis))
             # print(district_codes)
 
