@@ -17,8 +17,8 @@ chmod +x /home/dev-team/Desktop/scraping/crontab/pi/*.sh
 
 ## Pi Crontab
 ``` shell
-# everyday at 06:00
-0 6 * * * /home/dev-team/Desktop/scraping/crontab/pi/baanfinder.sh
+# everyday at 05:00
+0 5 * * * /home/dev-team/Desktop/scraping/crontab/pi/baanfinder.sh
 
 # every saturday at 14:00
 0 14 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/baania.sh
