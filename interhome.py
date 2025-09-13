@@ -279,7 +279,10 @@ def get_data(prop_url, type_id):
             # print(_province_codes,_district_codes)
             _sub_district_codes = "none"
             _prv, _dis, _subdis = fn.prov_dis_subdis(_province_codes,_district_codes,_sub_district_codes)
-            addresss.append(_address)
+
+            _new_address = str(_address).strip()
+            _new_address.replace(',', ' ').replace('\n', ' ').replace('\r', ' ')
+            addresss.append(_new_address)
             # print(addresss)
             province_codes.append(int(_prv))
             # print(addresss)
@@ -364,7 +367,9 @@ def get_data(prop_url, type_id):
         try:
             _detail = soup.find('div', class_='property-detail mt-20px').get_text().split('รายละเอียด')[1].strip().replace('\n','')
             # print(_detail)
-            details.append(_detail)
+            _detail.replace(',', ' ').replace('\n', ' ').replace('\r', ' ').replace("\t", " ")
+            cleaned_detail = " ".join(_detail.splitlines())
+            details.append(cleaned_detail.strip())
         except Exception as err:
             details.append('none')
 
