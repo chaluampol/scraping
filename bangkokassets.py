@@ -273,11 +273,11 @@ def get_data(prop_url, type_id, ID ):
             project_names.append('none')
 
         try:
-            _addresss = soup.find('td', class_='pd_detail_title1').parent.parent.get_text().split('ที่อยู่:')[1].split('เนื้อที่ดิน(ตร.วา):')[0].replace(' ','').trim()
-            _locationss = soup.find('td', class_='pd_detail_title1').parent.parent.get_text().split('ที่อยู่:')[1].split('เนื้อที่ดิน(ตร.วา):')[0].trim()
-            _province_codes = _locationss.split()[6].replace('จังหวัด','').trim()
-            _district_codes = _locationss.split()[5].replace('อำเภอ','').trim()
-            _sub_district_codes = _locationss.split()[4].replace('ตำบล','').trim()
+            _addresss = soup.find('td', class_='pd_detail_title1').parent.parent.get_text().split('ที่อยู่:')[1].split('เนื้อที่ดิน(ตร.วา):')[0].replace(' ','').strip()
+            _locationss = soup.find('td', class_='pd_detail_title1').parent.parent.get_text().split('ที่อยู่:')[1].split('เนื้อที่ดิน(ตร.วา):')[0].strip()
+            _province_codes = _locationss.split()[6].replace('จังหวัด','').strip()
+            _district_codes = _locationss.split()[5].replace('อำเภอ','').strip()
+            _sub_district_codes = _locationss.split()[4].replace('ตำบล','').strip()
             _prv, _dis, _subdis = fn.prov_dis_subdis(_province_codes,_district_codes,_sub_district_codes)
             # print(int(_prv))
             # print(_district_codes)
