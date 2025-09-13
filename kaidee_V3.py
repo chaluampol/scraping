@@ -259,7 +259,7 @@ def get_data(prop_url,type_id,scraper):
     # print(req.status_code)
     req.encoding = "utf-8"
     soup = BeautifulSoup(req.text, 'html.parser')
-    wait_time = 2.0
+    wait_time = 1.0
     sleep(wait_time)
 
     # scripts = soup.find_all('script')
