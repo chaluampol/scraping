@@ -274,7 +274,7 @@ def loop_links(prop_type):
 
 def get_data(prop_url, type_id, ID):
     # Headers = {'User-Agent': ua.random}
-    sleep(0.9)
+    # sleep(0.9)
 
     session = requests.Session()
     session.headers.update({
