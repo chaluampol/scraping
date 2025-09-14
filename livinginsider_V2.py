@@ -302,7 +302,7 @@ def get_data(prop_url, type_id, ID):
             names.append('none')
 
         try:
-            project_name = soup.find('span', class_='locationdetail-pj').get_text().strip().replace(',', '').replace('\n', ' ').replace('\r', '').replace('\t', '')
+            project_name = soup.find('div', class_='detail-text-project').find('a').get_text().strip()
             if project_name == 'ไม่ระบุโครงการ':
                 project_name = 'none'
             project_names.append(project_name)
@@ -337,69 +337,75 @@ def get_data(prop_url, type_id, ID):
             prices.append(0)
             range_of_house_prices.append(9)
 
+        _prop_detail = soup.find('div', class_="body-detail-left").find('div', class_="detail-list-property")
+        _detail_prop_list = _prop_detail.findAll('span', class_="detail-property-list-title")
+        
         try:
-            if type_id == 1 or type_id == 3:
-                _area_SQWs = soup.find('div', class_='box-flax-icon').get_text().strip().replace('\n', '').replace('\t', '')\
-                    .replace('\r', '').replace('   ', '').replace('  ', '').split('ตร.ว.')[0].replace('พื้นที่ : ', '')
-                _area_SQMs = 'none'
-            else:
-                _area_SQWs = 'none'
-                _area_SQMs = soup.find('div', class_='box-flax-icon').get_text().strip().replace('\n', '').replace('\t', '')\
-                    .replace('\r', '').replace('   ', '').replace('  ', '').split('ตร.ม.')[0].replace('พื้นที่ใช้สอย ', '')
-
-            area_SQWs.append(_area_SQWs)
-            area_SQMs.append(_area_SQMs)
+            _area_SQWs = 'none'
+            for ii in _detail_prop_list:
+                if ii.find(string=re.compile(r'ขนาดที่ดิน')) != None:
+                    _area_SQWs = ii.find(string=re.compile(r'ขนาดที่ดิน')).parent.parent.find('span', class_="detail-property-list-text").get_text().strip().split(" ")[0]
+            area_SQWs.append(_area_SQWs.strip())
         except Exception as err:
-            area_SQMs.append('none')
             area_SQWs.append('none')
 
-
+        try:
+            _area_SQMs = 'none'
+            for ii in _detail_prop_list:
+                if ii.find(string=re.compile(r'พื้นที่ใช้สอย')) != None:
+                    _area_SQMs = ii.find(string=re.compile(r'พื้นที่ใช้สอย')).parent.parent.find('span', class_="detail-property-list-text").get_text().strip().split(" ")[0]
+            area_SQMs.append(_area_SQMs.strip())
+        except Exception as err:
+            area_SQMs.append('none')
 
         try:
-            if type_id == 1 or type_id == 3:
-                _bedrooms = soup.find('div', class_='box-flax-icon').find_all("span", class_='lv-detail-font')[2].get_text().strip().split()[0]
-            else:
-                _bedrooms = soup.find('div', class_='box-flax-icon').find_all("span", class_='lv-detail-font')[1].get_text().strip().split()[0]
-                if _bedrooms == 'ห้องสตูดิโอ':
-                    _bedrooms = 'none'
-
-            bedrooms.append(_bedrooms)
+            _bedrooms = 'none'
+            for ii in _detail_prop_list:
+                if ii.find(string=re.compile(r'ห้องนอน')) != None:
+                    _bedrooms = ii.find(string=re.compile(r'ห้องนอน')).parent.parent.find('span', class_="detail-property-list-text").get_text().strip().split(" ")[0]
+                    if _bedrooms == 'ห้องสตูดิโอ':
+                        _bedrooms = 1
+            bedrooms.append(_bedrooms.strip())
         except Exception as err:
             bedrooms.append('none')
 
         try:
-            if type_id == 1 or type_id == 3:
-                _bathrooms = soup.find('div', class_='box-flax-icon').find_all("span", class_='lv-detail-font')[3].get_text().strip().split()[0]
-            else:
-                _bathrooms = soup.find('div', class_='box-flax-icon').find_all("span", class_='lv-detail-font')[2].get_text().strip().split()[0]
-
-            bathrooms.append(_bathrooms)
+            _bathrooms = 'none'
+            for ii in _detail_prop_list:
+                if ii.find(string=re.compile(r'ห้องน้ำ')) != None:
+                    _bathrooms = ii.find(string=re.compile(r'ห้องน้ำ')).parent.parent.find('span', class_="detail-property-list-text").get_text().strip().split(" ")[0]
+            bathrooms.append(_bathrooms.strip())
         except Exception as err:
             bathrooms.append('none')
 
         try:
-            if type_id == 1 or type_id == 3:
-                num_floors = soup.find('div', class_='box-flax-icon').find_all("span", class_='lv-detail-font')[4].get_text().strip().split()[0]
-                floors.append('none')
-                floor_numbers.append(num_floors)
-            else:
-                num_floors = soup.find('div', class_='box-flax-icon').find_all("span", class_='lv-detail-font')[3].get_text().strip().split()[1]
-                floors.append(num_floors)
-                floor_numbers.append('none')
+            _floor_numbers = 'none'
+            for ii in _detail_prop_list:
+                if ii.find(string=re.compile(r'จำนวนชั้น')) != None:
+                    _floor_numbers = ii.find(string=re.compile(r'จำนวนชั้น')).parent.parent.find('span', class_="detail-property-list-text").get_text().strip().split(" ")[0]
+            floor_numbers.append(_floor_numbers.strip())
         except Exception as err:
-            floors.append('none')
             floor_numbers.append('none')
 
+        try:
+            _floors = 'none'
+            for ii in _detail_prop_list:
+                if ii.find(string=re.compile(r'ชั้นที่')) != None:
+                    _floors = ii.find(string=re.compile(r'ชั้นที่')).parent.parent.find('span', class_="detail-property-list-text").get_text().strip().split(" ")[0]
+            floors.append(_floors.strip())
+        except Exception as err:
+            floors.append('none')
 
         try:
             _detail = soup.find('div', class_='wordwrap-box').get_text().strip()\
                 .replace('\n', ' ').replace('\r', '').replace('\t', '').replace(',', '').replace('  ', ' ')
-            details.append(_detail)
+            details.append(_detail.strip())
         except Exception as err:
             details.append('none')
 
         try:
-            _house_pictures = soup.find('div', class_='img-topic-dynamic').find('img', class_='gridsection-1')['src']
+            # _house_pictures = soup.find('div', class_='img-topic-dynamic').find('img', class_='gridsection-1')['src']
+            _house_pictures = soup.find("meta", property="og:image")["content"]
             house_pictures.append(_house_pictures)
         except Exception as err:
             house_pictures.append('none')
