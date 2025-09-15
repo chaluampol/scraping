@@ -20,27 +20,30 @@ chmod +x /home/dev-team/Desktop/scraping/crontab/pi/*.sh
 # everyday at 05:00
 0 5 * * * /home/dev-team/Desktop/scraping/crontab/pi/baanfinder.sh
 
-# every saturday at 14:00
-0 14 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/baania.sh
+# everyday at 18:00
+0 18 * * * /home/dev-team/Desktop/scraping/crontab/pi/livinginsider.sh
 
-# every saturday at 15:00
-0 15 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/dotproprety.sh
+# every monday at 14:00
+0 14 * * 1 /home/dev-team/Desktop/scraping/crontab/pi/baania.sh
 
-# every saturday at 18:00
-0 18 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/interhome.sh
+# every monday at 15:00
+0 15 * * 1 /home/dev-team/Desktop/scraping/crontab/pi/dotproprety.sh
 
-# every saturday at 19:00
-0 19 * * 6 /home/dev-team/Desktop/scraping/crontab/pi/kaidee.sh
+# every monday at 18:00
+0 18 * * 1 /home/dev-team/Desktop/scraping/crontab/pi/interhome.sh
 
-# every sunday at 14:00
-0 14 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/klungbaan.sh
+# every monday at 19:00
+0 19 * * 1 /home/dev-team/Desktop/scraping/crontab/pi/kaidee.sh
 
-# every sunday at 16:00
-0 16 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/terrabkk.sh
+# every tuesday at 14:00
+0 14 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/klungbaan.sh
 
-# every sunday at 17:00
-0 17 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown.sh
+# every tuesday at 16:00
+0 16 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/terrabkk.sh
 
-# every sunday at 19:00
-0 19 * * 7 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown_land.sh
+# every tuesday at 17:00
+0 17 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown.sh
+
+# every tuesday at 19:00
+0 19 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown_land.sh
 ```
