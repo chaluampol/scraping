@@ -337,8 +337,14 @@ def get_data(prop_url, type_id, ID):
             prices.append(0)
             range_of_house_prices.append(9)
 
-        _prop_detail = soup.find('div', class_="body-detail-left").find('div', class_="detail-list-property")
-        _detail_prop_list = _prop_detail.findAll('span', class_="detail-property-list-title")
+        _prop_detail = ''
+        _detail_prop_list = ''
+        try:
+            _prop_detail = soup.find('div', class_="body-detail-left").find('div', class_="detail-list-property")
+            _detail_prop_list = _prop_detail.findAll('span', class_="detail-property-list-title")
+        except Exception as err:
+            _prop_detail = 'none'
+            _detail_prop_list = 'none'
         
         try:
             _area_SQWs = 'none'
