@@ -327,8 +327,8 @@ def get_data(prop_url, type_id, ID,scraper):
             details.append('none')
 
         try:
-            latitudes.append(soup.find("div", id_="map-canvas")['data-lat'])
-            longtitudes.append(soup.find("div", id_="map-canvas")['data-lng'])
+            latitudes.append(soup.find("div", class_="nearby fixed-height longdo")['data-lat'])
+            longtitudes.append(soup.find("div", class_="nearby fixed-height longdo")['data-lng'])
         except Exception as err:
             latitudes.append('none')
             longtitudes.append('none')
