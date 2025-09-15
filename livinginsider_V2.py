@@ -341,7 +341,7 @@ def get_data(prop_url, type_id, ID):
         _detail_prop_list = ''
         try:
             _prop_detail = soup.find('div', class_="body-detail-left").find('div', class_="detail-list-property")
-            _detail_prop_list = _prop_detail.findAll('span', class_="detail-property-list-title")
+            _detail_prop_list = _prop_detail.find_all('span', class_="detail-property-list-title")
         except Exception as err:
             _prop_detail = 'none'
             _detail_prop_list = 'none'
