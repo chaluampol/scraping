@@ -282,7 +282,6 @@ def get_data(prop_url, type_id, ID ):
     # print(soup)
     try:
         webs.append(web)
-        project_names.append("none")
         _o = int(0)
 
         try:
@@ -292,6 +291,13 @@ def get_data(prop_url, type_id, ID ):
             names.append(_names)
         except Exception as err:
             names.append("none")
+
+        try:
+            _project_names = soup.find('script', text=lambda text: text and 'window.__NUXT__' in text).get_text().split('tag_project:')[1].split('name:')[1].split('}')[0].replace('"','')
+            print(_project_names)
+            project_names.append(_project_names)
+        except Exception as err:
+            project_names.append("none")
 
         try:
             _address = soup.find('script', text=lambda text: text and 'window.__NUXT__' in text).get_text().split('locationText')[1].split('spaceTotal')[0].split(',')
