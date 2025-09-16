@@ -217,7 +217,7 @@ def save_list_links(prop_type):
     end_page = property_type[prop_type]["end"] + 1
     route = property_type[prop_type]["route"]
     route_type = property_type[prop_type]["r_type"]
-    req_url = base_url.replace("placeholder_type", route)
+    req_url = base_url.replace("placeholder_type", route).replace("placeholder_sale_rent",route_type)
 
     # print(base_url)
     for i in tqdm(range(start_page, end_page)):
