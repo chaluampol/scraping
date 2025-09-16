@@ -19,6 +19,7 @@ import time
 import ssl
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+import cloudscraper
 
 
 
@@ -46,6 +47,28 @@ property_type = {
     "townhouse_rent": {"type_id": 3, "route": "Townhouse", "r_type": "Rent", "start": 1, "end": 7},
     "Townhome_rent": {"type_id": 3, "route": "Townhome", "r_type": "Rent", "start": 1, "end": 21}
 }
+
+# ++++++++++++ CloudScraper +++++++++++++++++
+rand = randint(1000, 10000)
+browsers = ['chrome', 'firefox']
+platforms = [{'platform': 'linux', 'mobile': False, 'desktop': True},
+            {'platform': 'windows', 'mobile': False, 'desktop': True},
+            {'platform': 'darwin', 'mobile': False, 'desktop': True},
+            {'platform': 'android', 'mobile': True, 'desktop': False}]
+
+rand_browser = browsers[randint(0, 1)]
+rand_platform = platforms[randint(0, 3)]
+
+scraper = cloudscraper.create_scraper(
+    browser={
+        'browser': rand_browser,
+        'platform': rand_platform['platform'],
+        'desktop': rand_platform['desktop'],
+        'mobile': rand_platform['mobile']
+    },
+    delay=rand,
+    interpreter='nodejs',
+)
 
 thai_full_months = [
     'มกราคม',
@@ -227,17 +250,12 @@ def save_list_links(prop_type):
         wait_time = 0.25
         url = req_url.replace("placeholder_page", str(i))
         # print(url)
-        session = requests.Session()
-        session.headers.update({
-            'User-Agent': ua.random
-        })
-        retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
-        session.mount("https://", HTTPAdapter(max_retries=retries))
-
-        # req = requests.get(url, headers=Headers, timeout=10)
-        req = session.get(req_url, timeout=10)
+            
+        # print(Headers)
+        # req = requests.get(prop_url, headers=Headers)
+        req = scraper.get(url, headers=Headers)
         while req.status_code != 200:
-            req = session.get(req_url, timeout=10)
+                req = scraper.get(url, headers=Headers)
 
         req.encoding = "cp874"
 
@@ -306,17 +324,23 @@ def convert(content):
 def get_data(prop_url, type_id, ID):
     # Headers = {'User-Agent': ua.random}
     # req = requests.get(prop_url, headers=Headers)
-    session = requests.Session()
-    session.headers.update({
-        'User-Agent': ua.random
-    })
-    retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
-    session.mount("https://", HTTPAdapter(max_retries=retries))
+    # session = requests.Session()
+    # session.headers.update({
+    #     'User-Agent': ua.random
+    # })
+    # retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+    # session.mount("https://", HTTPAdapter(max_retries=retries))
 
-    # req = requests.get(url, headers=Headers, timeout=10)
-    req = session.get(prop_url, timeout=10)
+    # # req = requests.get(url, headers=Headers, timeout=10)
+    # req = session.get(prop_url, timeout=10)
+    # while req.status_code != 200:
+    #     req = session.get(prop_url, timeout=10)
+    Headers = {'User-Agent': ua.random}
+    # print(Headers)
+    # req = requests.get(prop_url, headers=Headers)
+    req = scraper.get(prop_url, headers=Headers)
     while req.status_code != 200:
-        req = session.get(prop_url, timeout=10)
+            req = scraper.get(prop_url, headers=Headers)
 
     req.encoding = "cp874"
     soup = BeautifulSoup(req.text, 'html.parser')
