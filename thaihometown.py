@@ -247,7 +247,7 @@ def extract_links(content):
         a_tag = data.find("a", href=True)
         if a_tag:
             links.append(a_tag['href'])
-            print(a_tag['href'])  # print เป็น string เดียวๆ ดีกว่า
+            print(a_tag['href'])  
 
     return links
 
