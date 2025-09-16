@@ -255,7 +255,7 @@ def save_list_links(prop_type):
         # req = requests.get(prop_url, headers=Headers)
         req = scraper.get(url, headers=Headers)
         while req.status_code != 200:
-                req = scraper.get(url, headers=Headers)
+            req = scraper.get(url, headers=Headers)
 
         req.encoding = "cp874"
 
@@ -340,7 +340,7 @@ def get_data(prop_url, type_id, ID):
     # req = requests.get(prop_url, headers=Headers)
     req = scraper.get(prop_url, headers=Headers)
     while req.status_code != 200:
-            req = scraper.get(prop_url, headers=Headers)
+        req = scraper.get(prop_url, headers=Headers)
 
     req.encoding = "cp874"
     soup = BeautifulSoup(req.text, 'html.parser')
