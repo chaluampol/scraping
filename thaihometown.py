@@ -34,10 +34,10 @@ date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
 
 property_type = {
-    "home_rent"     : {"type_id": 1, "route": "Singlehouse", "r_type": "singlehouse", "start": 1, "end": 5},
-    "condo_rent"    : {"type_id": 2, "route": "Condominiem", "r_type": "condo", "start": 1, "end": 5},
-    "townhouse_rent": {"type_id": 3, "route": "Townhouse", "r_type": "townhouse", "start": 1, "end": 5},
-    "Townhome_rent": {"type_id": 3, "route": "Townhome", "r_type": "townhome", "start": 1, "end": 5}
+    "home_rent"     : {"type_id": 1, "route": "Singlehouse", "r_type": "singlehouse", "start": 1, "end": 20},
+    "condo_rent"    : {"type_id": 2, "route": "Condominiem", "r_type": "condo", "start": 1, "end": 25},
+    "townhouse_rent": {"type_id": 3, "route": "Townhouse", "r_type": "townhouse", "start": 1, "end": 20},
+    "Townhome_rent": {"type_id": 3, "route": "Townhome", "r_type": "townhome", "start": 1, "end": 10}
 }
 
 thai_full_months = [
