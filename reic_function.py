@@ -5,15 +5,21 @@ import platform
 import requests
 from dotenv import load_dotenv
 from pathlib import Path
-import matplotlib.pyplot as plt
 
+import mimetypes
+from typing import Iterable, List, Dict
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
+from googleapiclient.errors import HttpError
 
 # print(platform.system())
 # Windows
 # Darwin
 
 load_dotenv()
-
 
 prv_list = pd.read_csv('Region/TBL_Province.csv')
 dis_list = pd.read_csv('Region/TBL_District.csv')
@@ -74,7 +80,6 @@ def get_lim_bed_bath(type_id):
     }
     return lim_bed_bath[type_id]
 
-
 def get_location(house_address):
     section_words = house_address.replace("(", "").replace(")", "").replace("-", "").replace(".", "").split(",")
     count = 0
@@ -98,8 +103,7 @@ def get_location(house_address):
 
 def get_location_hometophit(_address):
     _new_address = _address.replace("(", "").replace(")", "").replace("-", " ").replace(".", "").replace('  ', ' ')
-    _address_list = _new_address.replace('จังหวัด', '').replace('จ.', '').replace('อำเภอ', '').replace('อ.',
-                                                                                                       '').replace(
+    _address_list = _new_address.replace('จังหวัด', '').replace('จ.', '').replace('อำเภอ', '').replace('อ.', '').replace(
         'เขต', '').replace('ตำบล', '').replace('ต.', '').split(' ')
 
     prv_name = ''
@@ -147,13 +151,12 @@ def prov_dis_subdis(prv, dis, subdis):
 
     try:
         subdis_code = new_subdis_list[(new_subdis_list['PROVINCE_code'] == prv_code) &
-                                  (new_subdis_list['Amphur_code'] == dis_code) &
-                                  (new_subdis_list['DISTRICT_NAME'] == subdis)]['DISTRICT_CODE'].item()
+                                (new_subdis_list['Amphur_code'] == dis_code) &
+                                (new_subdis_list['DISTRICT_NAME'] == subdis)]['DISTRICT_CODE'].item()
     except:
         subdis_code = 0
 
     return str(prv_code)[0: 2], str(dis_code)[0: 4], str(subdis_code)[0: 6]
-
 
 def get_sell_typeID(sell_type):
     if sell_type.find("ขาย") >= 0 and sell_type.find("เช่า") == -1:
@@ -210,7 +213,6 @@ def get_floor(name, detail):
         return 'none'
     return int(floor)
 
-
 def build_massage(date: str, web: str):
     project_root = Path(__file__).resolve().parent
     path_link = str(project_root) + "/links/" + date + "/"  + web + "/"
@@ -261,21 +263,23 @@ def send_message(date: str, web: str):
 
     _noti_message = build_massage(date, web)
 
-    url = "https://api.line.me/v2/bot/message/push"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {line_channel_access_token}"
-    }
-    data = {
-        "to": line_user_id,
-        "messages": [{"type": "text", "text": _noti_message}]
-    }
+    print(_noti_message)
 
-    res_line_msg = requests.post(url, headers=headers, json=data)
-    if res_line_msg.status_code == 200:
-        print("Line: Message sent successfully!")
-    else:
-        print(f"Line: Failed to send message: {res_line_msg.status_code}, {res_line_msg.text}")
+    # url = "https://api.line.me/v2/bot/message/push"
+    # headers = {
+    #     "Content-Type": "application/json",
+    #     "Authorization": f"Bearer {line_channel_access_token}"
+    # }
+    # data = {
+    #     "to": line_user_id,
+    #     "messages": [{"type": "text", "text": _noti_message}]
+    # }
+
+    # res_line_msg = requests.post(url, headers=headers, json=data)
+    # if res_line_msg.status_code == 200:
+    #     print("Line: Message sent successfully!")
+    # else:
+    #     print(f"Line: Failed to send message: {res_line_msg.status_code}, {res_line_msg.text}")
 
 def check_data(date: str, web: str):
     data_of_web_list = {
@@ -341,3 +345,137 @@ def check_data(date: str, web: str):
     output_txt_path = str(project_root) + "/logs/"+ date + "_" + web + "_result_table.txt"
     with open(output_txt_path, "w", encoding="utf-8") as f:
         f.write("```\n" + result_df.to_string(index=False) + "\n```")
+
+def upload_build_service_from_env():
+    """สร้าง Google Drive service จาก CLIENT_ID/SECRET/REFRESH_TOKEN ใน ENV"""
+    client_id = os.getenv("GDRIVE_CLIENT_ID")
+    client_secret = os.getenv("GDRIVE_CLIENT_SECRET")
+    refresh_token = os.getenv("GDRIVE_REFRESH_TOKEN")
+    scopes_env = os.getenv("GDRIVE_SCOPES", "https://www.googleapis.com/auth/drive.file")
+
+    # แปลงให้เป็นลิสต์ โดยแยกด้วยช่องว่าง (รองรับหลายสโคป)
+    scopes = [s for s in scopes_env.split() if s.strip()]
+
+    # เช็คค่าว่างให้เรียบร้อย จะได้ error ชัดเจน
+    missing = [k for k, v in {
+        "GDRIVE_CLIENT_ID": client_id,
+        "GDRIVE_CLIENT_SECRET": client_secret,
+        "GDRIVE_REFRESH_TOKEN": refresh_token,
+    }.items() if not v]
+    if missing:
+        raise RuntimeError(f"Missing required env vars: {', '.join(missing)}")
+
+    creds = Credentials(
+        token=None,  # จะรีเฟรชด้วย refresh_token ด้านล่าง
+        refresh_token=refresh_token,
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=client_id,
+        client_secret=client_secret,
+        scopes=scopes,
+    )
+    # รีเฟรช access token จาก refresh token
+    from google.auth.transport.requests import Request
+    creds.refresh(Request())
+
+    return build("drive", "v3", credentials=creds)
+
+def upload_get_or_create_path_under(service, parent_folder_id: str, path: str) -> str:
+    """
+    สร้างโฟลเดอร์หลายชั้นตาม path (เช่น "2025/09/15") ใต้ parent_folder_id
+    ถ้ามีอยู่แล้วจะใช้โฟลเดอร์เดิม คืนค่า folder_id ของโฟลเดอร์สุดท้าย
+    """
+    current_parent = parent_folder_id
+    for part in path.strip("/").split("/"):
+        # escape single quote ในชื่อโฟลเดอร์ (ตาม spec ของ Drive API)
+        safe_name = part.replace("'", "''")
+        q = (
+            "mimeType='application/vnd.google-apps.folder' "
+            f"and name='{safe_name}' "
+            f"and '{current_parent}' in parents and trashed=false"
+        )
+        res = service.files().list(
+            q=q,
+            fields="files(id, name)",
+            includeItemsFromAllDrives=True,
+            supportsAllDrives=True,
+            corpora="allDrives",
+            pageSize=10,
+        ).execute()
+        files = res.get("files", [])
+
+        if files:
+            folder_id = files[0]["id"]
+            print(f"ℹ️ พบโฟลเดอร์: {files[0]['name']}")
+        else:
+            meta = {
+                "name": part,
+                "mimeType": "application/vnd.google-apps.folder",
+                "parents": [current_parent],
+            }
+            folder = service.files().create(
+                body=meta,
+                fields="id, name, parents, webViewLink",
+                supportsAllDrives=True,
+            ).execute()
+            folder_id = folder["id"]
+            print(f"📁 สร้างโฟลเดอร์: {folder['name']}")
+        current_parent = folder_id
+
+    return current_parent
+
+def upload_one(service, file_path: str, folder_id: str, resumable: bool = False) -> Dict:
+    """อัปโหลดไฟล์เดียวเข้าโฟลเดอร์ด้วย folder_id"""
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"ไม่พบไฟล์: {file_path}")
+
+    name = os.path.basename(file_path)
+    mime, _ = mimetypes.guess_type(file_path)
+    media = MediaFileUpload(file_path, mimetype=mime, resumable=resumable)
+
+    return service.files().create(
+        body={"name": name, "parents": [folder_id]},
+        media_body=media,
+        fields="id, name, parents, webViewLink",
+        supportsAllDrives=True,
+    ).execute()
+
+def upload_many(service, files: Iterable[str], folder_id: str, resumable: bool = False) -> List[Dict]:
+    """อัปโหลดหลายไฟล์ คืนรายการผลลัพธ์ที่สำเร็จ"""
+    results = []
+    for p in files:
+        try:
+            info = upload_one(service, p, folder_id, resumable=resumable)
+            print(f"✅ อัปโหลดแล้ว: {info['name']}")
+            results.append(info)
+        except HttpError as e:
+            print(f"❌ อัปโหลดล้มเหลว: {p} -> {e}")
+    return results
+
+def upload_processing(date: str, web: str):
+    service = upload_build_service_from_env()
+    # ---- ตั้งค่าเป้าหมาย ----
+    FOLDER_ID = os.getenv("GDRIVE_FOLDER_ID")  # ใส่ Folder ID ปลายทางอื่น ๆ ได้
+
+    project_root = Path(__file__).resolve().parent
+    path_link = str(project_root) + "/links/" + date + "/"  + web + "/"
+    path_data = str(project_root) + "/Files/" + date + "/"  + web + "/"
+    FILES_LINK = [os.path.join(path_link, f) for f in os.listdir(path_link) if os.path.isfile(os.path.join(path_link, f))]
+    FILES_DATA = [os.path.join(path_data, f) for f in os.listdir(path_data) if os.path.isfile(os.path.join(path_data, f))]
+
+    if len(FILES_LINK) > 0:
+        gdrive_path = str(date)[0:7] + "/links/" + date + "/" + web
+        target_folder_id = upload_get_or_create_path_under(service, FOLDER_ID, gdrive_path)
+        upload_many(service, FILES_LINK, target_folder_id)
+
+    if len(FILES_DATA) > 0:
+        gdrive_path = str(date)[0:7] + "/Files/" + date + "/" + web
+        target_folder_id = upload_get_or_create_path_under(service, FOLDER_ID, gdrive_path)
+        upload_many(service, FILES_DATA, target_folder_id)
+
+def get_gdrive_refresh_token():
+    # SCOPES = os.getenv('GDRIVE_FOLDER_ID')
+    SCOPES = [os.getenv('GDRIVE_SCOPES')]
+    flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
+    creds = flow.run_local_server(port=0)  # จะเปิด localhost ให้ยืนยันสิทธิ์
+    print("REFRESH_TOKEN =", creds.refresh_token)
+    print("ACCESS_TOKEN  =", creds.token)

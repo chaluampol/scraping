@@ -713,3 +713,6 @@ if __name__ == '__main__':
 
             # send line message on success.
             fn.send_message(date, web)
+
+            # upload files to google drive.
+            fn.upload_processing(date, web)
