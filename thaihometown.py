@@ -274,7 +274,7 @@ def loop_links(prop_type):
         ID += 1
         link = links[i]
         get_data(link.strip(), type_id, ID)
-        break
+        # break
         sleep(0.5)
 
 
