@@ -24,7 +24,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 ua = UserAgent()
 
-base_url = "https://www.thaihometown.com/search/?page=placeholder_page&FormType=Rent&Type=placeholder_type&Submit=Search"
+base_url = "https://www.thaihometown.com/search/?page=placeholder_page&FormType=placeholder_sale_rent&Type=placeholder_type&Submit=Search"
 
 # +++++++++++++ แก้ข้อมูลเพื่อเก็บข้อมูล +++++++++++++ #
 web = 'thaihometown'
@@ -34,10 +34,15 @@ date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
 
 property_type = {
-    "home_rent"     : {"type_id": 1, "route": "Singlehouse", "r_type": "singlehouse", "start": 1, "end": 20},
-    "condo_rent"    : {"type_id": 2, "route": "Condominiem", "r_type": "condo", "start": 1, "end": 25},
-    "townhouse_rent": {"type_id": 3, "route": "Townhouse", "r_type": "townhouse", "start": 1, "end": 20},
-    "Townhome_rent": {"type_id": 3, "route": "Townhome", "r_type": "townhome", "start": 1, "end": 10}
+
+    "home_sale"     : {"type_id": 1, "route": "Home", "r_type": "Sale", "start": 1, "end": 1},
+    "condo_sale"    : {"type_id": 2, "route": "Condominiem", "r_type": "Sale", "start": 1, "end": 1},
+    "townhouse_sale": {"type_id": 3, "route": "Townhouse", "r_type": "Sale", "start": 1, "end": 1},
+    "Townhome_sale": {"type_id": 3, "route": "Townhome", "r_type": "Sale", "start": 1, "end": 1},
+    "home_rent"     : {"type_id": 1, "route": "Home", "r_type": "Rent", "start": 1, "end": 1},
+    "condo_rent"    : {"type_id": 2, "route": "Condominiem", "r_type": "Rent", "start": 1, "end": 1},
+    "townhouse_rent": {"type_id": 3, "route": "Townhouse", "r_type": "Rent", "start": 1, "end": 1},
+    "Townhome_rent": {"type_id": 3, "route": "Townhome", "r_type": "Rent", "start": 1, "end": 1}
 }
 
 thai_full_months = [
@@ -225,7 +230,7 @@ def save_list_links(prop_type):
         while req.status_code != 200:
             req = requests.get(url, headers=Headers)
 
-        all_links = extract_links(req.text, route_type)
+        all_links = extract_links(req.text)
         file_links = codecs.open(path_links + f"/links_{prop_type}.txt", "a+", "utf-8")
         for link in all_links:
             file_links.writelines(link + "\n")
@@ -233,15 +238,17 @@ def save_list_links(prop_type):
         sleep(wait_time)
 
 
-def extract_links(content, route_type):
+def extract_links(content):
     soup = BeautifulSoup(content, "html.parser")
-    # datas = soup.find("div", class_="namedesw7").find_all("a", class_='namelink')
     datas = soup.find_all("div", class_="infoSP")
+
     links = []
     for data in datas:
         a_tag = data.find("a", href=True)
-        if a_tag and route_type in a_tag['href']:
+        if a_tag:
             links.append(a_tag['href'])
+            print(a_tag['href'])  # print เป็น string เดียวๆ ดีกว่า
+
     return links
 
 
@@ -492,8 +499,15 @@ def get_data(prop_url, type_id, ID):
         except Exception as err:
             seller_tels.append('none')
 
-
-        sell_type_ids.append(2)
+        try:
+            if property_type[prop_type]["property_sell_rent"] == "Rent":
+                _sell_type_ids = int(2)
+            else:
+                _sell_type_ids = int(1)
+            sell_type_ids.append(_sell_type_ids)
+        except Exception as err:
+            sell_type_ids.append(int(1))
+            
         seller_emails.append('none')
         # seller_id ยังไม่ได้ทำ รอคำตอบจาก RS ว่าได้ใช้งานหรือไม่
         seller_ids.append(0)
