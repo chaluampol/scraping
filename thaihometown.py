@@ -17,6 +17,8 @@ import platform
 # import schedule
 import time
 import ssl
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 
 
@@ -225,10 +227,19 @@ def save_list_links(prop_type):
         wait_time = 0.25
         url = req_url.replace("placeholder_page", str(i))
         # print(url)
-        req = requests.get(url, headers=Headers)
-        # print(req.status_code)
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': ua.random
+        })
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+        session.mount("https://", HTTPAdapter(max_retries=retries))
+
+        # req = requests.get(url, headers=Headers, timeout=10)
+        req = session.get(req_url, timeout=10)
         while req.status_code != 200:
-            req = requests.get(url, headers=Headers)
+            req = session.get(req_url, timeout=10)
+
+        req.encoding = "cp874"
 
         all_links = extract_links(req.text)
         file_links = codecs.open(path_links + f"/links_{prop_type}.txt", "a+", "utf-8")
@@ -263,7 +274,7 @@ def loop_links(prop_type):
         ID += 1
         link = links[i]
         get_data(link.strip(), type_id, ID)
-        # break
+        break
         sleep(0.5)
 
 
@@ -293,10 +304,21 @@ def convert(content):
     return result
 
 def get_data(prop_url, type_id, ID):
-    Headers = {'User-Agent': ua.random}
-    req = requests.get(prop_url, headers=Headers)
-    req.encoding = "cp874"
+    # Headers = {'User-Agent': ua.random}
+    # req = requests.get(prop_url, headers=Headers)
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': ua.random
+    })
+    retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+    session.mount("https://", HTTPAdapter(max_retries=retries))
 
+    # req = requests.get(url, headers=Headers, timeout=10)
+    req = session.get(prop_url, timeout=10)
+    while req.status_code != 200:
+        req = session.get(prop_url, timeout=10)
+
+    req.encoding = "cp874"
     soup = BeautifulSoup(req.text, 'html.parser')
 
     try:
