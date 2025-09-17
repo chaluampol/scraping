@@ -263,23 +263,23 @@ def send_message(date: str, web: str):
 
     _noti_message = build_massage(date, web)
 
-    print(_noti_message)
+    # print(_noti_message)
 
-    # url = "https://api.line.me/v2/bot/message/push"
-    # headers = {
-    #     "Content-Type": "application/json",
-    #     "Authorization": f"Bearer {line_channel_access_token}"
-    # }
-    # data = {
-    #     "to": line_user_id,
-    #     "messages": [{"type": "text", "text": _noti_message}]
-    # }
+    url = "https://api.line.me/v2/bot/message/push"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {line_channel_access_token}"
+    }
+    data = {
+        "to": line_user_id,
+        "messages": [{"type": "text", "text": _noti_message}]
+    }
 
-    # res_line_msg = requests.post(url, headers=headers, json=data)
-    # if res_line_msg.status_code == 200:
-    #     print("Line: Message sent successfully!")
-    # else:
-    #     print(f"Line: Failed to send message: {res_line_msg.status_code}, {res_line_msg.text}")
+    res_line_msg = requests.post(url, headers=headers, json=data)
+    if res_line_msg.status_code == 200:
+        print("Line: Message sent successfully!")
+    else:
+        print(f"Line: Failed to send message: {res_line_msg.status_code}, {res_line_msg.text}")
 
 def check_data(date: str, web: str):
     data_of_web_list = {
