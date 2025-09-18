@@ -45,5 +45,5 @@ chmod +x /home/dev-team/Desktop/scraping/crontab/pi/*.sh
 0 17 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown.sh
 
 # every tuesday at 19:00
-0 19 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown_land.sh
+# 0 19 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown_land.sh
 ```
