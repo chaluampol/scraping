@@ -264,7 +264,7 @@ def loop_links(prop_type):
         link = links[i]
         get_data(link.strip(), type_id, ID)
         # break
-        sleep(0.5)
+        sleep(2)
 
 
 
@@ -296,8 +296,9 @@ def get_data(prop_url, type_id, ID):
     Headers = {'User-Agent': ua.random}
     req = requests.get(prop_url, headers=Headers)
     req.encoding = "cp874"
-
     soup = BeautifulSoup(req.text, 'html.parser')
+    sleep(2)
+
 
     try:
         project_names.append('none')
@@ -536,6 +537,8 @@ if __name__ == '__main__':
         if get_type == 'LINK':
             for prop_type in property_type:
                 save_list_links(prop_type)
+                sleep(2)
+
                 # break
 
         if get_type == "DATA":
@@ -545,6 +548,8 @@ if __name__ == '__main__':
                 # เรียกใช้ฟังก์ชัน reset_list() ที่แก้ไขแล้ว
                 reset_list()
                 loop_links(prop_type)
+                sleep(2)
+
 
                 print('ids', len(ids))
                 print('webs', len(webs))
