@@ -20,6 +20,9 @@ chmod +x /home/dev-team/Desktop/scraping/crontab/pi/*.sh
 # everyday at 05:00
 0 5 * * * /home/dev-team/Desktop/scraping/crontab/pi/baanfinder.sh
 
+# every tuesday at 14:30
+30 14 * * * /home/dev-team/Desktop/scraping/crontab/pi/thaihometown.sh
+
 # everyday at 18:00
 0 18 * * * /home/dev-team/Desktop/scraping/crontab/pi/livinginsider.sh
 
@@ -40,9 +43,6 @@ chmod +x /home/dev-team/Desktop/scraping/crontab/pi/*.sh
 
 # every tuesday at 16:00
 0 16 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/terrabkk.sh
-
-# every tuesday at 17:00
-0 17 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown.sh
 
 # every tuesday at 19:00
 # 0 19 * * 2 /home/dev-team/Desktop/scraping/crontab/pi/thaihometown_land.sh

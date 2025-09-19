@@ -35,14 +35,14 @@ date_now = fn.get_date_now()
 
 property_type = {
 
-    "home_sale"     : {"type_id": 1, "route": "Home", "r_type": "Sale", "start": 1, "end": 54},
-    "condo_sale"    : {"type_id": 2, "route": "Condominiem", "r_type": "Sale", "start": 1, "end": 33},
-    "townhouse_sale": {"type_id": 3, "route": "Townhouse", "r_type": "Sale", "start": 1, "end": 28},
-    "Townhome_sale": {"type_id": 3, "route": "Townhome", "r_type": "Sale", "start": 1, "end": 22},
-    "home_rent"     : {"type_id": 1, "route": "Home", "r_type": "Rent", "start": 1, "end": 40},
-    "condo_rent"    : {"type_id": 2, "route": "Condominiem", "r_type": "Rent", "start": 1, "end": 41},
-    "townhouse_rent": {"type_id": 3, "route": "Townhouse", "r_type": "Rent", "start": 1, "end": 7},
-    "Townhome_rent": {"type_id": 3, "route": "Townhome", "r_type": "Rent", "start": 1, "end": 21}
+    "home_sale"     : {"type_id": 1, "route": "Home", "r_type": "Sale", "start": 1, "end": 5},
+    "condo_sale"    : {"type_id": 2, "route": "Condominiem", "r_type": "Sale", "start": 1, "end": 5},
+    "townhouse_sale": {"type_id": 3, "route": "Townhouse", "r_type": "Sale", "start": 1, "end": 2},
+    "Townhome_sale": {"type_id": 3, "route": "Townhome", "r_type": "Sale", "start": 1, "end": 2},
+    "home_rent"     : {"type_id": 1, "route": "Home", "r_type": "Rent", "start": 1, "end": 5},
+    "condo_rent"    : {"type_id": 2, "route": "Condominiem", "r_type": "Rent", "start": 1, "end": 5},
+    "townhouse_rent": {"type_id": 3, "route": "Townhouse", "r_type": "Rent", "start": 1, "end": 2},
+    "Townhome_rent": {"type_id": 3, "route": "Townhome", "r_type": "Rent", "start": 1, "end": 2}
 }
 
 thai_full_months = [
