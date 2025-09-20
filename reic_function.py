@@ -479,3 +479,20 @@ def get_gdrive_refresh_token():
     creds = flow.run_local_server(port=0)  # จะเปิด localhost ให้ยืนยันสิทธิ์
     print("REFRESH_TOKEN =", creds.refresh_token)
     print("ACCESS_TOKEN  =", creds.token)
+
+def get_browser_path():
+    system = platform.system()
+    machine = platform.machine()
+
+    if system == "Windows":
+        return r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
+    elif system == "Linux" and not machine.startswith(("arm", "aarch")):
+        # Linux ปกติ (เช่น Ubuntu บน PC)
+        return "/usr/bin/brave-browser"
+    elif system == "Linux" and machine.startswith(("arm", "aarch")):
+        # Raspberry Pi OS (ARM)
+        return "/usr/bin/chromium"
+    elif system == "Darwin":  # macOS
+        return "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+    else:
+        return None  # default ของ Playwright

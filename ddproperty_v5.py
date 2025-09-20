@@ -256,9 +256,7 @@ def get_page_content(url: str = ""):
 
         browser = p.chromium.launch(
             headless=True,
-            # executable_path="C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
-            # executable_path="/opt/brave.com/brave/brave"
-            executable_path="/usr/bin/chromium"
+            executable_path=fn.get_browser_path()
         )
 
 
