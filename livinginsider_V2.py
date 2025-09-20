@@ -28,7 +28,7 @@ base_url = "https://www.livinginsider.com/searchword/placeholder_type/placeholde
 # ****** วันที่เก็บข้อมูล ****** #
 web = "livinginsider"
 get_types = ['LINK', 'DATA'] #'LINK', 'DATA'
-# date = datetime(2025, 6, 20).strftime('%Y-%m-%d') # manual
+# date = datetime(2025, 9, 19).strftime('%Y-%m-%d') # manual
 date = datetime.today().strftime('%Y-%m-%d') # auto
 date_now = fn.get_date_now()
 _day = date_now.split("-")[2]
@@ -233,8 +233,16 @@ def save_list_links(prop_type):
 
         # req = requests.get(url, headers=Headers, timeout=10)
         req = session.get(url, timeout=10)
+        _loop_time = 0
         while req.status_code != 200:
             req = session.get(url, timeout=10)
+            _loop_time += 1
+            if _loop_time == 10:
+                break
+
+        ###### ถถ้า loop ครบ 10 ครั้งแล้วยังไม่ได้ 200 ให้หลุดจาก function ทันที
+        if _loop_time == 10 and req.status_code != 200:
+            return 
 
         all_links = extract_links(req.text)
         file_links = codecs.open(path_links + f"/links_{prop_type}.txt", "a+", "utf-8")
@@ -285,9 +293,23 @@ def get_data(prop_url, type_id, ID):
 
     # req = requests.get(prop_url, headers=Headers, timeout=10)
     req = session.get(prop_url, timeout=10)
+    _loop_time = 0
+    while req.status_code != 200:
+        req = session.get(prop_url, timeout=10)
+        # print('while', req.status_code)
+        _loop_time += 1
+        if _loop_time == 10:
+            break
+
+    ###### ถถ้า loop ครบ 10 ครั้งแล้วยังไม่ได้ 200 ให้หลุดจาก function ทันที
+    if _loop_time == 10 and req.status_code != 200:
+        return 
+
+
     req.encoding = "utf-8"
 
     soup = BeautifulSoup(req.text, 'html.parser')
+    # print(soup.get_text())
 
     try:
         garages.append('none')
