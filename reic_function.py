@@ -252,18 +252,28 @@ def build_massage(date: str, web: str):
 
     with open(path_logs, "r", encoding="utf-8") as f:
         content = f.read()
+        _noti_massage += "<pre><code>"
         _noti_massage += "\n" + content
+        _noti_massage += "</code></pre>"
 
     _noti_massage += "\n##### " + web + " #####"
     return _noti_massage
 
 def send_message(date: str, web: str):
+    _noti_message = build_massage(date, web)
+    # print(_noti_message)
+
+    if (os.getenv("SEND_LINE_MSG") == "true"):
+        send_line_msg(_noti_message.replace("<pre><code>", "").replace("</code></pre>", ""))
+
+    if (os.getenv("SEND_TELEGRAM_MSG") == "true"):
+        send_telegram_msg(_noti_message.replace("```", ""))
+
+
+def send_line_msg(_noti_message: str):
+    
     line_channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
     line_user_id = os.getenv("LINE_USER_ID")
-
-    _noti_message = build_massage(date, web)
-
-    # print(_noti_message)
 
     url = "https://api.line.me/v2/bot/message/push"
     headers = {
@@ -280,6 +290,31 @@ def send_message(date: str, web: str):
         print("Line: Message sent successfully!")
     else:
         print(f"Line: Failed to send message: {res_line_msg.status_code}, {res_line_msg.text}")
+
+def send_telegram_msg(_noti_message: str):
+    # Token ของ Telegram Bot ที่ได้จาก BotFather
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    # chat_id ที่ได้จากการหาค่า chat_id ผ่าน getUpdates
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+
+    # URL สำหรับส่งข้อความ
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+
+    # ข้อมูลที่ส่งไป
+    payload = {
+        'chat_id': chat_id,
+        'parse_mode': 'HTML',
+        'text': _noti_message
+    }
+
+    # ส่ง POST request
+    res_msg = requests.post(url, data=payload)
+
+    # ตรวจสอบผลลัพธ์
+    if res_msg.status_code == 200:
+        print("Telegram: Message sent successfully!")
+    else:
+        print(f"Telegram: Failed to send message: {res_msg.status_code}, {res_msg.text}")
 
 def check_data(date: str, web: str):
     data_of_web_list = {

@@ -2,7 +2,7 @@ import reic_function as fn
 from datetime import datetime
 
 # date = datetime.today().strftime('%Y-%m-%d') # auto
-date = datetime(2025, 9, 14).strftime('%Y-%m-%d') # manual
+date = datetime(2025, 9, 19).strftime('%Y-%m-%d') # manual
 web="livinginsider"
 
 # chack data.
